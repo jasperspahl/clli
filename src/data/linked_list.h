@@ -6,17 +6,17 @@
 
 typedef struct node_ node;
 struct node_ {
-    void *value;
-    node *next;
-    node *previous;
+	void *value;
+	node *next;
+	node *previous;
 };
 
 typedef struct linked_list {
-    node *head;
-    node *tail;
-    int size;
+	node *head;
+	node *tail;
+	int size;
 
-    void (*free_value)(void *);
+	void (*free_value)(void *);
 } linked_list;
 
 /*

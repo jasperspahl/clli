@@ -1,7 +1,7 @@
 #ifndef PROJEKT_TEST_UTILS_H
 #define PROJEKT_TEST_UTILS_H
 
-#include "linked_list.h"
+#include "../data/linked_list.h"
 
 #define TEST(x) test_fn(x, #x)
 #define qll() create_linked_list(NULL)

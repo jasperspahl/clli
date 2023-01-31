@@ -1,25 +1,40 @@
 CC:=gcc
 CFLAGS=-Wall -Wextra -std=c11 -pedantic -g
 PROJ_NAME=clli
-OBJ_DIR=build
-SRC_DIR=src
 LIBS=-lm -lncurses
 
 .PHONY: all
 all: $(PROJ_NAME) $(PROJ_NAME)_tests test run
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+build/%.o: src/%.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-$(OBJ_DIR)/linked_list.o: $(SRC_DIR)/linked_list.c $(SRC_DIR)/linked_list.h
-$(OBJ_DIR)/main.o: $(SRC_DIR)/main.c $(SRC_DIR)/linked_list.h
-$(OBJ_DIR)/test_utils.o: $(SRC_DIR)/test_utils.c $(SRC_DIR)/test_utils.h
-$(OBJ_DIR)/tests.o: $(SRC_DIR)/tests.c $(SRC_DIR)/linked_list.h $(SRC_DIR)/test_utils.h
+build/utils/:
+	mkdir -p build/utils
+build/data/:
+	mkdir -p build/data
+build/ui/:
+	mkdir -p build/data
+# Utils
+build/utils/test_utils.o: src/utils/test_utils.c src/utils/test_utils.h
 
-$(PROJ_NAME): $(OBJ_DIR)/main.o $(OBJ_DIR)/linked_list.o
+# UI
+build/ui/ui.o: src/ui/ui.c src/ui/ui.h src/data/linked_list.h
+
+# Data
+build/data/data.o: src/data/data.c src/data/data.h src/data/linked_list.h
+build/data/linked_list.o: src/data/linked_list.c src/data/linked_list.h
+build/data/file_parsing.o: src/data/file_parsing.c src/data/file_parsing.h src/data/linked_list.h src/data/data.h
+
+# Tests
+build/tests.o: src/tests.c src/data/linked_list.h src/utils/test_utils.h
+# Main
+build/main.o: src/main.c src/data/linked_list.h src/data/file_parsing.h src/data/data.h src/ui/ui.h
+
+$(PROJ_NAME): build/main.o build/data/linked_list.o build/data/file_parsing.o build/data/data.o build/ui/ui.o
 	$(CC) $(CFLAGS) $(LIBS) -o $@ $^
 
-$(PROJ_NAME)_tests: $(OBJ_DIR)/tests.o $(OBJ_DIR)/linked_list.o $(OBJ_DIR)/test_utils.o
+$(PROJ_NAME)_tests: build/tests.o build/data/linked_list.o build/utils/test_utils.o
 	$(CC) $(CFLAGS) $(LIBS) -o $@ $^
 
 .PHONY: run
@@ -32,4 +47,4 @@ test: $(PROJ_NAME)_tests
 
 .PHONY: clean
 clean:
-	rm -f $(OBJ_DIR)/*.o $(PROJ_NAME) $(PROJ_NAME)_tests
+	rm -f build/*.o $(PROJ_NAME) $(PROJ_NAME)_tests
