@@ -13,7 +13,9 @@ typedef struct {
 
 // these functions are only used internally
 pair_intern get_pair(linked_list *list, node *a, node *b);
+
 void swap_nodes_intern(linked_list *list, node *left, node *right);
+
 /* -------------------------------------------------------------*/
 
 linked_list *create_linked_list(void (*free_value)(void *)) {
@@ -64,11 +66,11 @@ void free_list(linked_list *list) {
     free(list);
 }
 
-void * remove_node(linked_list *list, node *n) {
+void *remove_node(linked_list *list, node *n) {
     assert(node_exists(list, n));
     node *previous = n->previous;
     node *next = n->next;
-    void * value = n->value;
+    void *value = n->value;
     if (previous == NULL) {
         list->head = next;
     } else {
@@ -84,7 +86,7 @@ void * remove_node(linked_list *list, node *n) {
     return value;
 }
 
-void * remove_node_at(linked_list *list, int index) {
+void *remove_node_at(linked_list *list, int index) {
     assert(index >= 0);
     assert(index < list->size);
     node *current = list->head;
@@ -94,13 +96,8 @@ void * remove_node_at(linked_list *list, int index) {
     return remove_node(list, current);
 }
 
-void sort_list(linked_list *list, int (*compare)(const void *, const void *))
-{
+void sort_list(linked_list *list, int (*compare)(const void *, const void *)) {
     // TODO: implement quicksort
-}
-
-void print_int(void *value) {
-    printf("%d ", *(int *)value);
 }
 
 void sort_list_bubble(linked_list *list, int (*compare)(const void *, const void *)) {

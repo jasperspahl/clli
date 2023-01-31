@@ -7,8 +7,7 @@
 #include "test_utils.h"
 
 
-void test_ll_create(void)
-{
+void test_ll_create(void) {
     linked_list *list = create_linked_list(NULL);
     assert(list != NULL);
     assert(list->head == NULL);
@@ -25,8 +24,7 @@ void test_ll_create(void)
     free_list(list2);
 }
 
-void test_ll_add(void)
-{
+void test_ll_add(void) {
     // arrange
     linked_list *list = qll();
     // arrange
@@ -42,15 +40,15 @@ void test_ll_add(void)
     // cleanup
     free_list(list);
 }
-void test_ll_remove_first_item(void)
-{
+
+void test_ll_remove_first_item(void) {
     // arrange
     linked_list *list = qll();
     int v1 = 1, v2 = 2;
     node *n = add_node(list, &v1);
     node *n2 = add_node(list, &v2);
     // act
-    int value = *(int *)remove_node(list, n);
+    int value = *(int *) remove_node(list, n);
     //assert
     assert(value == 1);
     assert(list->head == n2);
@@ -63,8 +61,7 @@ void test_ll_remove_first_item(void)
     free_list(list);
 }
 
-void test_ll_remove_second_item(void)
-{
+void test_ll_remove_second_item(void) {
     // arrange
     linked_list *list = qll();
 
@@ -72,7 +69,7 @@ void test_ll_remove_second_item(void)
     node *n = add_node(list, &v1);
     node *n2 = add_node(list, &v2);
     // act
-    int value = *(int *)remove_node(list, n2);
+    int value = *(int *) remove_node(list, n2);
     //assert
     assert(value == 2);
     assert(list->head == n);
@@ -85,16 +82,15 @@ void test_ll_remove_second_item(void)
     free_list(list);
 }
 
-void test_ll_remove_middle_item(void)
-{
+void test_ll_remove_middle_item(void) {
     // arrange
     linked_list *list = qll();
     int v1 = 1, v2 = 2, v3 = 3;
-    node *n  = add_node(list, &v1);
+    node *n = add_node(list, &v1);
     node *n2 = add_node(list, &v2);
     node *n3 = add_node(list, &v3);
     // act
-    int value = *(int *)remove_node(list, n2);
+    int value = *(int *) remove_node(list, n2);
     //assert
     assert(value == 2);
     assert(list->head == n);
@@ -110,8 +106,7 @@ void test_ll_remove_middle_item(void)
     free_list(list);
 }
 
-void test_ll_remove_item_at(void)
-{
+void test_ll_remove_item_at(void) {
     // arrange
     linked_list *list = qll();
     int v1 = 1, v2 = 2, v3 = 3;
@@ -119,7 +114,7 @@ void test_ll_remove_item_at(void)
     __attribute__((unused)) node *n2 = add_node(list, &v2);
     node *n3 = add_node(list, &v3);
     // act
-    int value = *(int *)remove_node_at(list, 1);
+    int value = *(int *) remove_node_at(list, 1);
     //assert
     assert(value == 2);
     assert(list->head == n);
@@ -135,8 +130,7 @@ void test_ll_remove_item_at(void)
     free_list(list);
 }
 
-void test_ll_node_exists(void)
-{
+void test_ll_node_exists(void) {
     // arrange
     linked_list *list = qll();
     int v = 1;
@@ -149,8 +143,7 @@ void test_ll_node_exists(void)
     free_list(list);
 }
 
-void test_ll_swap_nodes__first_and_last(void)
-{
+void test_ll_swap_nodes__first_and_last(void) {
     // arrange
     const int values[5] = {1, 2, 3, 4, 5};
     int expected[5] = {5, 2, 3, 4, 1};
@@ -162,22 +155,19 @@ void test_ll_swap_nodes__first_and_last(void)
     // assert
     assert(list->head == last);
     assert(list->tail == first);
-    for (int i = 0; i < 5; i++)
-    {
-        assert(*(int *)list->head->value == expected[i]);
+    for (int i = 0; i < 5; i++) {
+        assert(*(int *) list->head->value == expected[i]);
         list->head = list->head->next;
     }
-    for (int i = 4; i >= 0; i--)
-    {
-        assert(*(int *)list->tail->value == expected[i]);
+    for (int i = 4; i >= 0; i--) {
+        assert(*(int *) list->tail->value == expected[i]);
         list->tail = list->tail->previous;
     }
     // cleanup
     free_list(list);
 }
 
-void test_ll_swap_nodes__second_and_second_last(void)
-{
+void test_ll_swap_nodes__second_and_second_last(void) {
     // arrange
     const int values[5] = {1, 2, 3, 4, 5};
     const int expect[5] = {1, 4, 3, 2, 5};
@@ -189,25 +179,22 @@ void test_ll_swap_nodes__second_and_second_last(void)
     // assert
     assert(list->head->next == second_last);
     assert(list->tail->previous == second);
-    for (int i = 0; i < 5; i++)
-    {
-        assert(*(int *)list->head->value == expect[i]);
+    for (int i = 0; i < 5; i++) {
+        assert(*(int *) list->head->value == expect[i]);
         list->head = list->head->next;
     }
-    for (int i = 4; i >= 0; i--)
-    {
-        assert(*(int *)list->tail->value == expect[i]);
+    for (int i = 4; i >= 0; i--) {
+        assert(*(int *) list->tail->value == expect[i]);
         list->tail = list->tail->previous;
     }
     // cleanup
     free_list(list);
 }
 
-void test_ll_swap_nodes__nodes_the_same(void)
-{
+void test_ll_swap_nodes__nodes_the_same(void) {
     // arrange
-    const int values[5] = {1, 2, 3, 4,  5 };
-    const int expect[5] = {1, 2, 3, 4,  5};
+    const int values[5] = {1, 2, 3, 4, 5};
+    const int expect[5] = {1, 2, 3, 4, 5};
     linked_list *list = create_int_list(values, 5);
     node *n1 = list->head->next->next;
     node *n2 = list->tail->previous->previous;
@@ -216,22 +203,19 @@ void test_ll_swap_nodes__nodes_the_same(void)
     // assert
     assert(list->head->next->next == n2);
     assert(list->tail->previous->previous == n1);
-    for (int i = 0; i < 5; i++)
-    {
-        assert(*(int *)list->head->value == expect[i]);
+    for (int i = 0; i < 5; i++) {
+        assert(*(int *) list->head->value == expect[i]);
         list->head = list->head->next;
     }
-    for (int i = 4; i >= 0; i--)
-    {
-        assert(*(int *)list->tail->value == expect[i]);
+    for (int i = 4; i >= 0; i--) {
+        assert(*(int *) list->tail->value == expect[i]);
         list->tail = list->tail->previous;
     }
     // cleanup
     free_list(list);
 }
 
-void test_ll_sort_list_bubble(void)
-{
+void test_ll_sort_list_bubble(void) {
     // arrange
     const int values[5] = {5, 4, 3, 2, 1};
     const int expect[5] = {1, 2, 3, 4, 5};
@@ -239,22 +223,19 @@ void test_ll_sort_list_bubble(void)
     // act
     sort_list_bubble(list, compare_ints);
     // assert
-    for (int i = 0; i < 5; i++)
-    {
-        assert(*(int *)list->head->value == expect[i]);
+    for (int i = 0; i < 5; i++) {
+        assert(*(int *) list->head->value == expect[i]);
         list->head = list->head->next;
     }
-    for (int i = 4; i >= 0; i--)
-    {
-        assert(*(int *)list->tail->value == expect[i]);
+    for (int i = 4; i >= 0; i--) {
+        assert(*(int *) list->tail->value == expect[i]);
         list->tail = list->tail->previous;
     }
     // cleanup
     free_list(list);
 }
 
-void test_ll_sort_list_bubble__already_sorted(void)
-{
+void test_ll_sort_list_bubble__already_sorted(void) {
     // arrange
     const int values[5] = {1, 2, 3, 4, 5};
     const int expect[5] = {1, 2, 3, 4, 5};
@@ -262,22 +243,19 @@ void test_ll_sort_list_bubble__already_sorted(void)
     // act
     sort_list_bubble(list, compare_ints);
     // assert
-    for (int i = 0; i < 5; i++)
-    {
-        assert(*(int *)list->head->value == expect[i]);
+    for (int i = 0; i < 5; i++) {
+        assert(*(int *) list->head->value == expect[i]);
         list->head = list->head->next;
     }
-    for (int i = 4; i >= 0; i--)
-    {
-        assert(*(int *)list->tail->value == expect[i]);
+    for (int i = 4; i >= 0; i--) {
+        assert(*(int *) list->tail->value == expect[i]);
         list->tail = list->tail->previous;
     }
     // cleanup
     free_list(list);
 }
 
-void test_ll_sort_list_bubble__empty_list(void)
-{
+void test_ll_sort_list_bubble__empty_list(void) {
     // arrange
     linked_list *list = qll();
     // act
@@ -289,8 +267,7 @@ void test_ll_sort_list_bubble__empty_list(void)
     free_list(list);
 }
 
-void test_ll_sort_list_bubble__one_item(void)
-{
+void test_ll_sort_list_bubble__one_item(void) {
     // arrange
     const int values[1] = {1};
     const int expect[1] = {1};
@@ -298,26 +275,23 @@ void test_ll_sort_list_bubble__one_item(void)
     // act
     sort_list_bubble(list, compare_ints);
     // assert
-    for (int i = 0; i < 1; i++)
-    {
-        assert(*(int *)list->head->value == expect[i]);
+    for (int i = 0; i < 1; i++) {
+        assert(*(int *) list->head->value == expect[i]);
         list->head = list->head->next;
     }
-    for (int i = 0; i >= 0; i--)
-    {
-        assert(*(int *)list->tail->value == expect[i]);
+    for (int i = 0; i >= 0; i--) {
+        assert(*(int *) list->tail->value == expect[i]);
         list->tail = list->tail->previous;
     }
     // cleanup
     free_list(list);
 }
 
-void test_ll_sort_list_pseudo_ranodom(void){
+void test_ll_sort_list_pseudo_ranodom(void) {
     // arrange
     srand(0);
     int values[40];
-    for (int i = 0; i < 40; i++)
-    {
+    for (int i = 0; i < 40; i++) {
         values[i] = rand();
     }
     linked_list *list = create_int_list(values, 100);
@@ -325,15 +299,13 @@ void test_ll_sort_list_pseudo_ranodom(void){
     sort_list_bubble(list, compare_ints);
     // assert
     node *current = list->head;
-    for (int i = 0; i < 39; i++)
-    {
-        assert(compare_ints(current->value, current->next->value)<=0);
+    for (int i = 0; i < 39; i++) {
+        assert(compare_ints(current->value, current->next->value) <= 0);
         current = current->next;
     }
 }
 
-int main(void)
-{
+int main(void) {
     clock_t start = clock();
 
     TEST(test_ll_create);
@@ -353,6 +325,6 @@ int main(void)
     TEST(test_ll_sort_list_pseudo_ranodom);
 
     clock_t end = clock();
-    printf("All tests passed in %.5f!\n", (double)(end - start) / CLOCKS_PER_SEC);
+    printf("All tests passed in %.5f!\n", (double) (end - start) / CLOCKS_PER_SEC);
     return 0;
 }

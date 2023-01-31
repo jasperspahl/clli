@@ -11,15 +11,14 @@ void test_fn(void (*fn)(void), char *name) {
     clock_t start = clock();
     fn();
     clock_t end = clock();
-    printf("OK took %.5f sec\n", (double)(end - start) / CLOCKS_PER_SEC);
+    printf("OK took %.5f sec\n", (double) (end - start) / CLOCKS_PER_SEC);
 }
 
 void free_int(void *value) {
     free(value);
 }
 
-linked_list *create_int_list(const int *values, size_t size)
-{
+linked_list *create_int_list(const int *values, size_t size) {
     linked_list *list = create_linked_list(free_int);
     for (size_t i = 0; i < size; i++) {
         int *value = malloc(sizeof(int));
@@ -30,5 +29,5 @@ linked_list *create_int_list(const int *values, size_t size)
 }
 
 int compare_ints(const void *a, const void *b) {
-    return *(int *)a - *(int *)b;
+    return *(int *) a - *(int *) b;
 }
