@@ -29,6 +29,18 @@ static const char *view_names[] = {
 		"  Quit"
 };
 
+enum Modes {
+	INSERT,
+	NORMAL,
+	COMMAND
+};
+
+static const char *mode_names[] = {
+		"INSERT",
+		"NORMAL",
+		"COMMAND"
+};
+
 struct Model {
 	linked_list *list;
 	node *current;
@@ -37,8 +49,10 @@ struct Model {
 	enum View previous_view;
 	WINDOW *overview_window;
 	WINDOW *detail_window;
+	WINDOW *detail_text_window;
 	WINDOW *statusbar;
 	char *search_term;
+	enum Modes mode;
 };
 
 void usage(char *program_name);

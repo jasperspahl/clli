@@ -8,8 +8,11 @@
 #include <stdlib.h>
 #include <math.h>
 #include <ncurses.h>
+#include <string.h>
 
-#define OVER_VIEW_TO_DETAIL_RATIO 0.8
+#define OVER_VIEW_TO_DETAIL_RATIO 0.7
+#define STATUSBAR_HEIGHT 2
+#define DOUBLE_BORDER_WIDTH 2
 
 void init_ncurses(void) {
 	initscr();
@@ -27,9 +30,13 @@ void init_windows(struct Model *model) {
 	int max_y, max_x;
 	getmaxyx(stdscr, max_y, max_x);
 	int overview_width = (int) round((double) max_x * (1.0 - OVER_VIEW_TO_DETAIL_RATIO));
-	model->statusbar = newwin(1, max_x, max_y - 1, 0);
-	model->overview_window = newwin(max_y - 1, overview_width, 0, 0);
-	model->detail_window = newwin(max_y - 1, max_x - overview_width, 0, overview_width);
+	model->statusbar = newwin(STATUSBAR_HEIGHT, max_x, max_y - STATUSBAR_HEIGHT, 0);
+	model->overview_window = newwin(max_y - STATUSBAR_HEIGHT, overview_width, 0, 0);
+	model->detail_window = newwin(max_y - STATUSBAR_HEIGHT, max_x - overview_width, 0, overview_width);
+	model->detail_text_window = derwin(model->detail_window,
+	                                   getmaxy(model->detail_window) - DOUBLE_BORDER_WIDTH, // heigth
+	                                   getmaxx(model->detail_window) - DOUBLE_BORDER_WIDTH, // width
+	                                   1, 1);
 }
 
 void draw_screen(struct Model *model) {
@@ -38,13 +45,14 @@ void draw_screen(struct Model *model) {
 	wattron(model->statusbar, A_BOLD);
 	mvwprintw(model->statusbar, 0, 1, "Mode: %s | Size of list: %d", view_names[model->view], model->list->size);
 	wattroff(model->statusbar, A_BOLD);
-	wrefresh(model->statusbar);
+	wnoutrefresh(model->statusbar);
 
 	// Draw the overview window
 	draw_overview(model);
 
 	// Draw the detail window
 	draw_detail(model);
+	doupdate();
 
 	switch (model->view) {
 		case HELP:
@@ -82,9 +90,9 @@ void draw_border(WINDOW *window, char *title) {
 }
 
 void draw_overview(struct Model *model) {
-	wmove(model->overview_window, 1, 1);
+	wclear(model->overview_window);
 	if (model->list->size == 0) {
-		wprintw(model->overview_window, "No projects found");
+		mvwprintw(model->overview_window, 1, 1, "No projects found");
 	} else {
 		node *current = model->list->head;
 		int max_y = getmaxy(model->overview_window);
@@ -99,16 +107,18 @@ void draw_overview(struct Model *model) {
 			}
 		}
 
+		int i = 1;
 		while (current != NULL) {
 			opensource_project *osp = current->value;
 			if (current == model->current) {
 				wattron(model->overview_window, A_REVERSE);
 			}
-			wprintw(model->overview_window, "%s\n", osp->name);
+			mvwprintw(model->overview_window, i, 1, "%s", osp->name);
 			if (current == model->current) {
 				wattroff(model->overview_window, A_REVERSE);
 			}
 			current = current->next;
+			i++;
 		}
 	}
 	if (model->view == LIST) {
@@ -118,17 +128,30 @@ void draw_overview(struct Model *model) {
 	} else {
 		draw_border(model->overview_window, "Overview");
 	}
-	wrefresh(model->overview_window);
+	wnoutrefresh(model->overview_window);
 }
 
 void draw_detail(struct Model *model) {
+	if (model->current == NULL) {
+		mvwprintw(model->detail_text_window, 0, 0, "No project selected");
+		goto draw_bdr;
+	}
+	// cast the current node to an open source project
 	opensource_project *osp = model->current->value;
-	wmove(model->detail_window, 1, 1);
-	wprintw(model->detail_window, "Name: %s", osp->name);
-	wprintw(model->detail_window, "Description: %s", osp->description);
-	wprintw(model->detail_window, "URL: %s", osp->url);
-	wprintw(model->detail_window, "Stars: %d", osp->stars);
-	wprintw(model->detail_window, "Issues: %d", osp->issues);
+
+	// clear the detail window
+	wclear(model->detail_text_window);
+
+	int max_x = getmaxx(model->detail_text_window);
+
+	mvwprintw(model->detail_text_window, 0, 0, "%s", osp->name);
+	mvwprintw(model->detail_text_window, 1, 0, "%s\n", osp->url);
+	mvwprintw(model->detail_text_window, 0, max_x - 12, "Stars: %5d", osp->stars);
+	mvwprintw(model->detail_text_window, 1, max_x - 12, "Issues: %4d", osp->issues);
+	mvwhline(model->detail_text_window, 2, 0, ACS_HLINE, max_x);
+	mvwprintw(model->detail_text_window, 3, 0, "%s", osp->description);
+
+	draw_bdr:
 	if (model->view == DETAIL) {
 		wattron(model->detail_window, A_REVERSE);
 		draw_border(model->detail_window, "Detail");
@@ -136,7 +159,7 @@ void draw_detail(struct Model *model) {
 	} else {
 		draw_border(model->detail_window, "Detail");
 	}
-	wrefresh(model->detail_window);
+	wnoutrefresh(model->detail_window);
 }
 
 void end_ncurses(void) {

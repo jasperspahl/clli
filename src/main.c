@@ -9,6 +9,8 @@
 #include "data/data.h"
 #include "ui/ui.h"
 
+#include "utils/get_testdata.h"
+
 void usage(char *program_name) {
 	printf("Usage: %s [<filename>]\n", program_name);
 	exit(1);
@@ -34,6 +36,11 @@ int main(int argc, char **argv) {
 				                          "A Cookbook Web Application based on the Microservices",
 				                          "https://github.com/LibreCuisine/LibreCuisine", 1, 8);
 		add_node(list, osp);
+		opensource_project **osp_list = get_testdata_set();
+		while (*osp_list != NULL) {
+			add_node(list, *osp_list);
+			osp_list++;
+		}
 	}
 
 	struct Model model = {
