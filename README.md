@@ -7,7 +7,7 @@ File parsing [png-parsing]
 
 ## File parsing
 
-a file consists of chunks of data
+a file consists of chunks of data all gets stored in Little Endian
 
 ```c
 struct chunk {
@@ -15,9 +15,10 @@ struct chunk {
     char title[title_length];
     size_t data_length;
     char data[data_length];
-    uint32_t starts;
     size_t url_length;
     char url[url_length];
+    uint32_t stars;
+    uint32_t issues
 }
 ```
 
