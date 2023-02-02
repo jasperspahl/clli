@@ -60,7 +60,10 @@ void start_add_manual_flow(struct Model *model) {
 			continue;
 		}
 	}
+	description = fetch_readme(name);
 
+	url = malloc(sizeof("https://github.com/") + strlen(name));
+	sprintf(url, "https://github.com/%s", name);
 	wclear(model->add_text_window);
 	status = UI_RETRY;
 	while (status == UI_RETRY) {
@@ -72,6 +75,9 @@ void start_add_manual_flow(struct Model *model) {
 
 		status = ui_ok_cancel(model->add_text_window, 4, 2, "OK", "Cancel");
 		if (status == UI_CANCEL) {
+			if (description != NULL) {
+				free(description);
+			}
 			free(name);
 			free(url);
 			return;
@@ -92,11 +98,11 @@ void start_add_manual_flow(struct Model *model) {
 	while (!move_on && (ch = wgetch(model->add_text_window)) != 's') {
 		switch (ch) {
 			case 'v':
-				description = ui_open_vim(fetch_readme(name));
+				description = ui_open_vim(description);
 				move_on = true;
 				break;
 			case 'n':
-				description = ui_open_nano(fetch_readme(name));
+				description = ui_open_nano(description);
 				move_on = true;
 				break;
 			default:

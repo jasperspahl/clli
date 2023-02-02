@@ -6,6 +6,7 @@
 #include <math.h>
 #include <ncurses.h>
 #include <string.h>
+#include <locale.h>
 
 #define OVER_VIEW_TO_DETAIL_RATIO 0.7
 #define STATUSBAR_HEIGHT 2
@@ -26,6 +27,7 @@ const char *view_names[9] = {
 
 
 void init_ncurses(void) {
+	setlocale(LC_ALL, "en_US.UTF-8");
 	initscr();
 	cbreak();
 	noecho();
@@ -135,6 +137,7 @@ void draw_overview(struct Model *model) {
 			if (current == model->current) {
 				wattron(model->overview_window, A_REVERSE);
 			}
+			mvwhline(model->overview_window, i, 1, ' ', getmaxx(model->overview_window) - 2);
 			mvwprintw(model->overview_window, i, 1, "%s", osp->name);
 			if (current == model->current) {
 				wattroff(model->overview_window, A_REVERSE);
@@ -185,7 +188,7 @@ void draw_detail(struct Model *model) {
 	             0, // source pad x
 	             getbegy(model->detail_text_window) + 3, // dest window y
 	             getbegx(model->detail_text_window), // dest window x
-	             getbegy(model->detail_text_window) + getmaxy(model->detail_text_window) - 3, // dest window height
+	             getbegy(model->detail_text_window) + getmaxy(model->detail_text_window) - 1, // dest window height
 	             getbegx(model->detail_text_window) + getmaxx(model->detail_text_window) // dest window width
 	);
 }
