@@ -1,10 +1,7 @@
-//
-// Created by jasper on 31.01.23.
-//
-
 #include "ui.h"
 #include "../data/data.h"
 #include "../utils/editor_utils.h"
+#include "../utils/fetch_readme.h"
 
 #include <stdlib.h>
 #include <math.h>
@@ -14,6 +11,7 @@
 #define OVER_VIEW_TO_DETAIL_RATIO 0.7
 #define STATUSBAR_HEIGHT 2
 #define DOUBLE_BORDER_WIDTH 2
+#define MAX_UI_TEXT_LINES 10000
 
 const char *view_names[9] = {
 		"  List",
@@ -26,30 +24,7 @@ const char *view_names[9] = {
 		"  Sort",
 		"  Quit"
 };
-const char *mode_names[3] = {
-		"INSERT",
-		"NORMAL",
-		"COMMAND"
-};
 
-const char *help_elements[] = {
-		"q: Quit",
-		"j: Move down",
-		"k: Move up",
-		"l: Move right",
-		"h: Move left",
-		"n: New entry",
-		"e: Edit entry",
-		"d: Delete entry",
-		"/: Search",
-		"o: Sort",
-		"?: Help",
-		/*"i: Insert mode",*/
-		/*"ESC: Normal mode",*/
-		/*":: Command mode",*/
-		"ENTER: Confirm",
-		"F10: Quit",
-};
 
 void init_ncurses(void) {
 	initscr();
@@ -74,6 +49,7 @@ void init_windows(struct Model *model) {
 	                                   getmaxy(model->detail_window) - DOUBLE_BORDER_WIDTH, // height
 	                                   getmaxx(model->detail_window) - DOUBLE_BORDER_WIDTH, // width
 	                                   1, 1);
+	model->detail_text_pad = newpad(MAX_UI_TEXT_LINES, getmaxx(model->detail_window) - DOUBLE_BORDER_WIDTH);
 	model->help_window = newwin(max_y / 2, max_x / 2, max_y / 4, max_x / 4);
 	model->help_text_window = derwin(model->help_window,
 	                                 getmaxy(model->help_window) - DOUBLE_BORDER_WIDTH - // height
@@ -85,6 +61,7 @@ void init_windows(struct Model *model) {
 	                                getmaxy(model->add_window) - DOUBLE_BORDER_WIDTH, // height
 	                                getmaxx(model->add_window) - DOUBLE_BORDER_WIDTH, // width
 	                                1, 1);
+	model->popup_window = newwin(8, max_x * 2 / 3, (max_y * 2 / 3) - 4, max_x / 6);
 }
 
 void draw_screen(struct Model *model) {
@@ -106,18 +83,9 @@ void draw_screen(struct Model *model) {
 	}
 	doupdate();
 
-	// things that need to be drawn after doupdate
+	// things that need to be drawn after do update
 
 	switch (model->view) {
-		case ADD:
-			// TODO: Implement add view
-			start_add_flow(model);
-			break;
-		case DELETE:
-			// TODO: Implement delete view
-			// draw delete bestätigung
-			//draw_delete(model);
-			break;
 		case SEARCH:
 			// TODO: Implement search view
 			// IDEA: floating window with fzf like search
@@ -184,24 +152,22 @@ void draw_overview(struct Model *model) {
 void draw_detail(struct Model *model) {
 	if (model->current == NULL) {
 		mvwprintw(model->detail_text_window, 0, 0, "No project selected");
-		goto draw_bdr;
+	} else {
+		// cast the current node to an open source project
+		opensource_project *osp = model->current->value;
+
+		// clear the detail window
+		wclear(model->detail_text_window);
+
+		int max_x = getmaxx(model->detail_text_window);
+		mvwprintw(model->detail_text_window, 0, 0, "%s", osp->name);
+		mvwprintw(model->detail_text_window, 1, 0, "%s\n", osp->url);
+		mvwprintw(model->detail_text_window, 0, max_x - 13, "Stars: %6d", osp->stars);
+		mvwprintw(model->detail_text_window, 1, max_x - 13, "Issues: %5d", osp->issues);
+		mvwhline(model->detail_text_window, 2, 0, ACS_HLINE, max_x);
+		wclear(model->detail_text_pad);
+		mvwaddstr(model->detail_text_pad, 0, 0, osp->description);
 	}
-	// cast the current node to an open source project
-	opensource_project *osp = model->current->value;
-
-	// clear the detail window
-	wclear(model->detail_text_window);
-
-	int max_x = getmaxx(model->detail_text_window);
-
-	mvwprintw(model->detail_text_window, 0, 0, "%s", osp->name);
-	mvwprintw(model->detail_text_window, 1, 0, "%s\n", osp->url);
-	mvwprintw(model->detail_text_window, 0, max_x - 12, "Stars: %5d", osp->stars);
-	mvwprintw(model->detail_text_window, 1, max_x - 12, "Issues: %4d", osp->issues);
-	mvwhline(model->detail_text_window, 2, 0, ACS_HLINE, max_x);
-	mvwprintw(model->detail_text_window, 3, 0, "%s", osp->description);
-
-	draw_bdr:
 	if (model->view == DETAIL) {
 		wattron(model->detail_window, A_REVERSE);
 		draw_border(model->detail_window, "Detail");
@@ -210,7 +176,36 @@ void draw_detail(struct Model *model) {
 		draw_border(model->detail_window, "Detail");
 	}
 	wnoutrefresh(model->detail_window);
+	pnoutrefresh(model->detail_text_pad, // source pad
+	             model->detail_pos, // source pad y
+	             0, // source pad x
+	             getbegy(model->detail_text_window) + 3, // dest window y
+	             getbegx(model->detail_text_window), // dest window x
+	             getbegy(model->detail_text_window) + getmaxy(model->detail_text_window) - 3, // dest window height
+	             getbegx(model->detail_text_window) + getmaxx(model->detail_text_window) // dest window width
+	);
 }
+
+const char *help_elements[] = {
+		"q: Quit",
+		"j: Move down",
+		"k: Move up",
+		"l: Move right",
+		"h: Move left",
+		"n, a: New entry",
+		"e: Edit entry",
+		"d: Delete entry",
+		"o: Sort",
+		"/: Search",
+		"?: Help",
+		/*"i: Insert mode",*/
+		/*"ESC: Normal mode",*/
+		/*":: Command mode",*/
+		"ENTER: Confirm",
+		"F10: Quit",
+		"J: next in Detail View",
+		"K: previous in Detail View",
+};
 
 void draw_help(struct Model *model) {
 	wclear(model->help_text_window);
@@ -247,65 +242,63 @@ void start_add_flow(struct Model *model) {
 		switch (ch) {
 			case 'a':
 				start_add_manual_flow(model);
-				model->view = model->previous_view;
+				draw_screen(model);
 				return;
 			case 'g':
 				start_add_github_flow(model);
-				model->view = model->previous_view;
+				draw_screen(model);
 				return;
 			default:
 				break;
 		}
 	}
+	model->view = model->previous_view;
 }
-
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "misc-no-recursion"
 
 void start_add_manual_flow(struct Model *model) {
 	int ch;
 	char *name, *url, *description;
+	uint32_t stars, issues;
+	ui_okcancel status = UI_RETRY;
 	name = url = description = NULL;
 	wclear(model->add_text_window);
-	keypad(model->add_text_window, true);
 
-	get_name:
-	mvwprintw(model->add_text_window, 1, 2, "Name: ");
-	draw_ok_cancel(model->add_text_window, 4, 2, "OK", "Cancel");
-	wmove(model->add_text_window, 1, 8);
+	while (status == UI_RETRY) {
+		mvwprintw(model->add_text_window, 1, 2, "Name: ");
+		draw_ok_cancel(model->add_text_window, 4, 2, "OK", "Cancel");
+		wmove(model->add_text_window, 1, 8);
 
-	name = ui_text_input(model->add_text_window, 1, 8, name);
-	if (name == NULL || strlen(name) == 0) {
-		goto get_name;
-	}
+		name = ui_text_input(model->add_text_window, 1, 8, name);
+		if (name == NULL || strlen(name) == 0) {
+			continue;
+		}
 
-	switch (ui_ok_cancel(model->add_text_window, 4, 2, "OK", "Cancel")) {
-		case UI_OK:
-			break;
-		case UI_CANCEL:
+		status = ui_ok_cancel(model->add_text_window, 4, 2, "OK", "Cancel");
+		if (status == UI_CANCEL) {
+			free(name);
 			return;
-		case UI_RETRY:
-			goto get_name;
+		}
 	}
 
 	wclear(model->add_text_window);
-	get_url:
-	mvwprintw(model->add_text_window, 1, 2, "Url: ");
-	draw_ok_cancel(model->add_text_window, 4, 2, "OK", "Cancel");
-	wmove(model->add_text_window, 1, 7);
+	status = UI_RETRY;
+	while (status == UI_RETRY) {
+		mvwprintw(model->add_text_window, 1, 2, "Url: ");
+		draw_ok_cancel(model->add_text_window, 4, 2, "OK", "Cancel");
+		wmove(model->add_text_window, 1, 7);
 
-	url = ui_text_input(model->add_text_window, 1, 7, url);
-	if (url == NULL || strlen(url) == 0) {
-		goto get_url;
-	}
+		url = ui_text_input(model->add_text_window, 1, 7, url);
+		if (url == NULL || strlen(url) == 0) {
+			continue;
+		}
 
-	switch (ui_ok_cancel(model->add_text_window, 4, 2, "OK", "Cancel")) {
-		case UI_OK:
-			break;
-		case UI_CANCEL:
+		status = ui_ok_cancel(model->add_text_window, 4, 2, "OK", "Cancel");
+		if (status == UI_CANCEL) {
+			free(name);
+			free(url);
 			return;
-		case UI_RETRY:
-			goto get_url;
+		}
+
 	}
 
 	wclear(model->add_text_window);
@@ -313,21 +306,23 @@ void start_add_manual_flow(struct Model *model) {
 	mvwprintw(model->add_text_window, 2, 2, "v: open vim");
 	mvwprintw(model->add_text_window, 3, 2, "n: open nano");
 	mvwprintw(model->add_text_window, 4, 2, "s: skip");
-	while ((ch = wgetch(model->add_text_window)) != 's') {
+	bool move_on = false;
+	while (!move_on && (ch = wgetch(model->add_text_window)) != 's') {
 		switch (ch) {
 			case 'v':
-				description = ui_open_vim(NULL);
-				refresh();
-				goto finish_desc;
+				description = ui_open_vim(fetch_readme(name));
+				move_on = true;
+				break;
 			case 'n':
-				description = ui_open_nano(NULL);
-				refresh();
-				goto finish_desc;
+				description = ui_open_nano(fetch_readme(name));
+				move_on = true;
+				break;
 			default:
 				break;
 		}
 	}
-	finish_desc:
+	// Rerender Everything after exiting editor
+	refresh();
 	clear();
 	draw_overview(model);
 	draw_detail(model);
@@ -337,57 +332,85 @@ void start_add_manual_flow(struct Model *model) {
 	draw_border(model->add_window, "Add");
 	wrefresh(model->add_window);
 
-	get_stars:
-	mvwprintw(model->add_text_window, 1, 2, "Stars: ");
-	draw_ok_cancel(model->add_text_window, 4, 2, "OK", "Cancel");
-	wmove(model->add_text_window, 1, 9);
+	status = UI_RETRY;
+	while (status == UI_RETRY) {
+		mvwprintw(model->add_text_window, 1, 2, "Stars: ");
+		draw_ok_cancel(model->add_text_window, 4, 2, "OK", "Cancel");
+		wmove(model->add_text_window, 1, 9);
 
-	uint32_t stars = ui_uint32_t_input(model->add_text_window, 1, 9);
+		stars = ui_uint32_t_input(model->add_text_window, 1, 9);
 
-	switch (ui_ok_cancel(model->add_text_window, 4, 2, "OK", "Cancel")) {
-		case UI_OK:
-			break;
-		case UI_CANCEL:
+		status = ui_ok_cancel(model->add_text_window, 4, 2, "OK", "Cancel");
+		if (status == UI_CANCEL) {
+			free(name);
+			free(description);
+			free(url);
 			return;
-		case UI_RETRY:
-			goto get_stars;
+		}
 	}
 
 	wclear(model->add_text_window);
-	get_issues:
-	mvwprintw(model->add_text_window, 1, 2, "Issues: ");
-	draw_ok_cancel(model->add_text_window, 4, 2, "OK", "Cancel");
-	wmove(model->add_text_window, 1, 10);
+	status = UI_RETRY;
+	while (status == UI_RETRY) {
+		mvwprintw(model->add_text_window, 1, 2, "Issues: ");
+		draw_ok_cancel(model->add_text_window, 4, 2, "OK", "Cancel");
+		wmove(model->add_text_window, 1, 10);
 
-	uint32_t issues = ui_uint32_t_input(model->add_text_window, 1, 10);
+		issues = ui_uint32_t_input(model->add_text_window, 1, 10);
 
-	switch (ui_ok_cancel(model->add_text_window, 4, 2, "OK", "Cancel")) {
-		case UI_OK:
-			break;
-		case UI_CANCEL:
+		status = ui_ok_cancel(model->add_text_window, 4, 2, "OK", "Cancel");
+		if (status == UI_CANCEL) {
+			free(name);
+			free(description);
+			free(url);
 			return;
-		case UI_RETRY:
-			goto get_issues;
+		}
 	}
 
 	opensource_project *osp = create_opensource_project(name, description, url, stars, issues);
 	if (osp == NULL) {
+		free(name);
+		free(description);
+		free(url);
 		return;
 	}
-	add_node(model->list, osp);
-	model->current = model->list->tail;
+	model->current = add_node(model->list, osp);
 	model->view = model->previous_view;
-	draw_screen(model);
 }
 
-#pragma clang diagnostic pop
 
 void start_add_github_flow(struct Model *model) {
 	// TODO: Implement
+	model->view = model->previous_view;
+}
+
+void start_delete_flow(struct Model *model) {
+	wclear(model->popup_window);
+	opensource_project *osp = model->current->value;
+	draw_border(model->popup_window, "Delete");
+	mvwprintw(model->popup_window, 2, 2, "Are you sure you want to delete ");
+	wattron(model->popup_window, A_BOLD);
+	wprintw(model->popup_window, "%s", osp->name);
+	wattroff(model->popup_window, A_BOLD);
+	wprintw(model->popup_window, "?");
+
+	draw_ok_cancel(model->popup_window, 5, 2, "OK", "Cancel");
+	wrefresh(model->popup_window);
+	ui_okcancel result;
+	while ((result = ui_ok_cancel(model->popup_window, 5, 2, "OK", "Cancel")) == UI_RETRY) {
+		// do nothing
+	}
+	if (result == UI_OK) {
+		node *next = model->current->next;
+		remove_node(model->list, model->current);
+		model->current = next;
+	}
+	model->view = model->previous_view;
+
 }
 
 char *ui_open_vim(char *buffer) {
-	return editor_edit(buffer, "nvim");
+	return editor_edit(buffer, "nvim +\"set ft=markdown\"");
 }
 
 char *ui_open_nano(char *buffer) {
@@ -531,25 +554,44 @@ ui_okcancel ui_ok_cancel(WINDOW *win, int y, int x, const char *ok, const char *
 			}
 		}
 	}
+	return UI_CANCEL;
 }
 
 void end_ncurses(void) {
 	endwin();
 }
 
+void select_next(struct Model *model) {
+	if (model->current != NULL && model->current->next != NULL) {
+		model->current = model->current->next;
+		model->detail_pos = 0;
+	} else if ((model->current == NULL && model->list->head != NULL) ||
+	           (model->current != NULL && model->current->next == NULL)) {
+		model->current = model->list->head;
+		model->detail_pos = 0;
+	}
+}
+
+void select_previous(struct Model *model) {
+	if (model->current != NULL && model->current->previous != NULL) {
+		model->current = model->current->previous;
+		model->detail_pos = 0;
+	} else if ((model->current == NULL && model->list->tail != NULL) ||
+	           (model->current != NULL && model->current->previous == NULL)) {
+		model->current = model->list->tail;
+		model->detail_pos = 0;
+	}
+}
+
 bool handle_list_input(struct Model *model, int ch) {
 	switch (ch) {
 		case 'k':
 		case KEY_UP:
-			if (model->current->previous != NULL) {
-				model->current = model->current->previous;
-			}
+			select_previous(model);
 			return true;
 		case 'j':
 		case KEY_DOWN:
-			if (model->current->next != NULL) {
-				model->current = model->current->next;
-			}
+			select_next(model);
 			return true;
 		case 'l':
 		case '\t':
@@ -557,6 +599,8 @@ bool handle_list_input(struct Model *model, int ch) {
 		case KEY_RIGHT:
 			model->view = DETAIL;
 			return true;
+		default:
+			break;
 	}
 	return false;
 }
@@ -569,6 +613,26 @@ bool handle_detail_input(struct Model *model, int ch) {
 		case KEY_RIGHT:
 			model->view = LIST;
 			return true;
+		case 'j':
+			if (model->detail_pos < MAX_UI_TEXT_LINES) {
+				model->detail_pos = model->detail_pos + 1;
+			}
+			return true;
+		case 'k':
+			if (model->detail_pos > 0) {
+				model->detail_pos--;
+			}
+			return true;
+		case 'K':
+		case KEY_UP:
+			select_previous(model);
+			return true;
+		case 'J':
+		case KEY_DOWN:
+			select_next(model);
+			return true;
+		default:
+			break;
 	}
 	return false;
 }
@@ -587,6 +651,8 @@ bool handle_help_input(struct Model *model, int ch) {
 		case KEY_DOWN:
 			model->help_page++;
 			return true;
+		default:
+			break;
 	}
 	return false;
 }

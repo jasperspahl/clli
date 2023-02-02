@@ -2,7 +2,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <errno.h>
 #include <string.h>
 
 #include "linked_list.h"
@@ -16,15 +15,13 @@ void free_opensource_project(void *value) {
 }
 
 opensource_project *
-create_opensource_project(char *name, char *description, char *url, uint32_t stars, uint32_t issues) {
+create_opensource_project(const char *name, const char *description, const char *url, uint32_t stars, uint32_t issues) {
 	opensource_project *project = malloc(sizeof(opensource_project));
-	*project = (opensource_project) {
-			.name = name,
-			.description = description,
-			.url = url,
-			.stars = stars,
-			.issues = issues,
-	};
+	project->name = (char *) name;
+	project->description = (char *) description;
+	project->url = (char *) url;
+	project->stars = stars;
+	project->issues = issues;
 	return project;
 }
 

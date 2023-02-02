@@ -287,7 +287,7 @@ void test_ll_sort_list_bubble__one_item(void) {
 	free_list(list);
 }
 
-void test_ll_sort_list_pseudo_ranodom(void) {
+void test_ll_sort_list_pseudo_random(void) {
 	// arrange
 	srand(0);
 	int values[40];
@@ -322,7 +322,7 @@ int main(void) {
 	TEST(test_ll_sort_list_bubble__already_sorted);
 	TEST(test_ll_sort_list_bubble__empty_list);
 	TEST(test_ll_sort_list_bubble__one_item);
-	TEST(test_ll_sort_list_pseudo_ranodom);
+	TEST(test_ll_sort_list_pseudo_random);
 
 	clock_t end = clock();
 	printf("All tests passed in %.5f!\n", (double) (end - start) / CLOCKS_PER_SEC);

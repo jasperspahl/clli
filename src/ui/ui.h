@@ -19,15 +19,6 @@ enum View {
 
 extern const char *view_names[9];
 
-enum Modes {
-	INSERT,
-	NORMAL,
-	COMMAND
-};
-
-extern const char *mode_names[3];
-
-extern const char *help_elemends[];
 struct Model {
 	linked_list *list;
 	node *current;
@@ -37,15 +28,17 @@ struct Model {
 	WINDOW *overview_window;
 	WINDOW *detail_window;
 	WINDOW *detail_text_window;
+	WINDOW *detail_text_pad;
 	WINDOW *help_window;
 	WINDOW *help_text_window;
 	WINDOW *add_window;
 	WINDOW *add_text_window;
+	WINDOW *popup_window;
 	WINDOW *statusbar;
 
 	char *search_term;
-	enum Modes mode;
 	size_t help_page;
+	int detail_pos;
 };
 
 void usage(char *program_name);
@@ -66,6 +59,10 @@ void draw_detail(struct Model *model);
 
 void draw_help(struct Model *model);
 
+void select_next(struct Model *model);
+
+void select_previous(struct Model *model);
+
 /**
  * Draws the add view and start the add flow.
  * @param model The model to update.
@@ -75,6 +72,8 @@ void start_add_flow(struct Model *model);
 void start_add_manual_flow(struct Model *model);
 
 void start_add_github_flow(struct Model *model);
+
+void start_delete_flow(struct Model *model);
 
 /**
  * Ui Text input.
@@ -101,21 +100,22 @@ typedef enum ui_okcancel_ {
 
 /**
  * Ui Ok/Cancel dialog.
- * example for usage:
+ * @example
  * @code
  * char *buffer;
- * get_buffer:
- * ui_text_input(window, y, x, buffer);
- * switch(ui_ok_cancel(window, y+2, x, "Ok", "Cancel")) {
- * 	case UI_OK:
- * 		// do something
- * 		break;
- * 	case UI_CANCEL:
- * 		// do something
- * 		break;
- * 	case UI_RETRY:
- * 		goto get_buffer;
+ * ui_okcanel result == UI_RETRY;
+ * while(result == UI_RETRY) {
+ * 	ui_text_input(window, y, x, buffer);
+ * 	result = ui_ok_cancel(window, y, x, "Ok", "Cancel");
+ * 	if(buffer == NULL || strlen(buffer) == 0) {
+ * 		result = UI_RETRY;
+ * 	}
  * }
+ * if(result == UI_CANCEL) {
+ * 	free(buffer);
+ * 	return;
+ * }
+ *
  * @endcode
  * @param window The window to draw the dialog to.
  * @param y The y position to start the dialog.

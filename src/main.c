@@ -47,6 +47,9 @@ int main(int argc, char **argv) {
 			.list = list,
 			.current = list->head,
 			.view = LIST,
+			.previous_view = LIST,
+			.detail_pos = 0,
+			.help_page = 0,
 	};
 
 	// Initialize ncurses
@@ -62,54 +65,58 @@ int main(int argc, char **argv) {
 	// Main loop
 	int ch;
 	// F10 always quits (like htop)
+	bool already_handled = false;
 	while (model.view != QUIT && (ch = getch()) != KEY_F(10)) {
+		already_handled = false;
 		// Handle view specific input
 		switch (model.view) {
 			case LIST:
-				if (handle_list_input(&model, ch)) {
-					goto draw_now;
-				}
+				already_handled = handle_list_input(&model, ch);
 				break;
 			case DETAIL:
-				if (handle_detail_input(&model, ch)) {
-					goto draw_now;
-				}
+				already_handled = handle_detail_input(&model, ch);
 				break;
 			case HELP:
-				if (handle_help_input(&model, ch)) {
-					goto draw_now;
-				}
+				already_handled = handle_help_input(&model, ch);
 				break;
 			default:
 				break;
 		}
-		// Handle global input
-		switch (ch) {
-			case '?':
-				model.previous_view = model.view;
-				model.view = HELP;
-				break;
-			case '/':
-				model.previous_view = model.view;
-				// TODO: Implement search
-				model.view = SEARCH;
-				break;
-			case 'q':
-				model.view = QUIT;
-				break;
-			case 'i':
-				model.previous_view = model.view;
-				model.view = EDIT;
-				break;
-			case 'a':
-				model.previous_view = model.view;
-				model.view = ADD;
-				break;
-			default:
-				break;
+		// Handle global input if not already handled
+		if (!already_handled) {
+			switch (ch) {
+				case '?':
+					model.previous_view = model.view;
+					model.view = HELP;
+					break;
+				case '/':
+					model.previous_view = model.view;
+					// TODO: Implement search
+					model.view = SEARCH;
+					break;
+				case 'q':
+					model.view = QUIT;
+					break;
+				case 'i':
+					model.previous_view = model.view;
+					model.view = EDIT;
+					break;
+				case 'a':
+				case 'n':
+					model.previous_view = model.view;
+					model.view = ADD;
+					start_add_flow(&model);
+					break;
+				case 'd':
+					model.previous_view = model.view;
+					model.view = DELETE;
+					start_delete_flow(&model);
+					break;
+				default:
+					break;
+			}
+
 		}
-		// goto is used here to avoid handling input twice
-		draw_now:
 		// Draw the screen
 		draw_screen(&model);
 	}
