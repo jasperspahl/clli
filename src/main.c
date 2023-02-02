@@ -80,12 +80,13 @@ int main(int argc, char **argv) {
 					goto draw_now;
 				}
 				break;
+			default:
+				break;
 		}
 		// Handle global input
 		switch (ch) {
 			case '?':
 				model.previous_view = model.view;
-				// TODO: Implement help
 				model.view = HELP;
 				break;
 			case '/':
@@ -103,6 +104,8 @@ int main(int argc, char **argv) {
 			case 'a':
 				model.previous_view = model.view;
 				model.view = ADD;
+				break;
+			default:
 				break;
 		}
 		// goto is used here to avoid handling input twice

@@ -1,5 +1,6 @@
 CC:=gcc
-CFLAGS=-Wall -Wextra -std=c11 -pedantic -g
+CFLAGS=-Wall -Wextra -g
+CFLAGS+=-std=c11 -pedantic
 PROJ_NAME=clli
 LIBS=-lm -lncurses
 
@@ -18,9 +19,10 @@ build/ui/:
 # Utils
 build/utils/test_utils.o: src/utils/test_utils.c src/utils/test_utils.h
 build/utils/get_testdata.o: src/utils/get_testdata.c src/utils/get_testdata.h src/data/data.h
+build/utils/editor_utils.o: src/utils/editor_utils.c src/utils/editor_utils.h
 
 # UI
-build/ui/ui.o: src/ui/ui.c src/ui/ui.h src/data/linked_list.h
+build/ui/ui.o: src/ui/ui.c src/ui/ui.h src/data/linked_list.h src/data/data.h src/utils/editor_utils.h
 
 # Data
 build/data/data.o: src/data/data.c src/data/data.h src/data/linked_list.h
@@ -32,7 +34,7 @@ build/tests.o: src/tests.c src/data/linked_list.h src/utils/test_utils.h
 # Main
 build/main.o: src/main.c src/data/linked_list.h src/data/file_parsing.h src/data/data.h src/ui/ui.h
 
-$(PROJ_NAME): build/main.o build/data/linked_list.o build/data/file_parsing.o build/data/data.o build/ui/ui.o build/utils/get_testdata.o
+$(PROJ_NAME): build/main.o build/data/linked_list.o build/data/file_parsing.o build/data/data.o build/ui/ui.o build/utils/get_testdata.o build/utils/editor_utils.o
 	$(CC) $(CFLAGS) $(LIBS) -o $@ $^
 
 $(PROJ_NAME)_tests: build/tests.o build/data/linked_list.o build/utils/test_utils.o

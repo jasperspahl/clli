@@ -30,15 +30,32 @@ create_opensource_project(char *name, char *description, char *url, uint32_t sta
 
 void serialize_opensource_project(void *value, FILE *file) {
 	opensource_project *project = value;
-	size_t name_length = strlen(project->name);
-	size_t description_length = strlen(project->description);
-	size_t url_length = strlen(project->url);
+	if (project == NULL) {
+		return;
+	}
+	size_t name_length, description_length, url_length;
+	name_length = description_length = url_length = 0;
+	if (project->name != NULL) {
+		name_length = strlen(project->name);
+	}
+	if (project->description != NULL) {
+		description_length = strlen(project->description);
+	}
+	if (project->url != NULL) {
+		url_length = strlen(project->url);
+	}
 	fwrite(&name_length, sizeof(size_t), 1, file);
-	fwrite(project->name, sizeof(char), strlen(project->name), file);
+	if (name_length > 0) {
+		fwrite(project->name, sizeof(char), strlen(project->name), file);
+	}
 	fwrite(&description_length, sizeof(size_t), 1, file);
-	fwrite(project->description, sizeof(char), strlen(project->description), file);
+	if (description_length > 0) {
+		fwrite(project->description, sizeof(char), strlen(project->description), file);
+	}
 	fwrite(&url_length, sizeof(size_t), 1, file);
-	fwrite(project->url, sizeof(char), strlen(project->url), file);
+	if (url_length > 0) {
+		fwrite(project->url, sizeof(char), strlen(project->url), file);
+	}
 	fwrite(&project->stars, sizeof(uint32_t), 1, file);
 	fwrite(&project->issues, sizeof(uint32_t), 1, file);
 }
@@ -52,11 +69,13 @@ opensource_project *deserialize_opensource_project(FILE *file) {
 		free(project);
 		return NULL;
 	}
-	project->name = malloc(sizeof(char) * name_length);
-	if (fread(project->name, sizeof(char), name_length, file) != name_length) {
-		free(project->name);
-		free(project);
-		return NULL;
+	if (name_length > 0) {
+		project->name = malloc(sizeof(char) * name_length);
+		if (fread(project->name, sizeof(char), name_length, file) != name_length) {
+			free(project->name);
+			free(project);
+			return NULL;
+		}
 	}
 	// Read length of description, allocate memory for description and read description
 	if (fread(&description_length, sizeof(size_t), 1, file) != 1) {
@@ -64,12 +83,14 @@ opensource_project *deserialize_opensource_project(FILE *file) {
 		free(project);
 		return NULL;
 	}
-	project->description = malloc(sizeof(char) * description_length);
-	if (fread(project->description, sizeof(char), description_length, file) != description_length) {
-		free(project->name);
-		free(project->description);
-		free(project);
-		return NULL;
+	if (description_length > 0) {
+		project->description = malloc(sizeof(char) * description_length);
+		if (fread(project->description, sizeof(char), description_length, file) != description_length) {
+			free(project->name);
+			free(project->description);
+			free(project);
+			return NULL;
+		}
 	}
 	// Read length of url, allocate memory for url and read url
 	if (fread(&url_length, sizeof(size_t), 1, file) != 1) {
@@ -78,13 +99,15 @@ opensource_project *deserialize_opensource_project(FILE *file) {
 		free(project);
 		return NULL;
 	}
-	project->url = malloc(sizeof(char) * url_length);
-	if (fread(project->url, sizeof(char), url_length, file) != url_length) {
-		free(project->name);
-		free(project->description);
-		free(project->url);
-		free(project);
-		return NULL;
+	if (url_length > 0) {
+		project->url = malloc(sizeof(char) * url_length);
+		if (fread(project->url, sizeof(char), url_length, file) != url_length) {
+			free(project->name);
+			free(project->description);
+			free(project->url);
+			free(project);
+			return NULL;
+		}
 	}
 	// Read stars and issues
 	fread(&project->stars, sizeof(uint32_t), 1, file);

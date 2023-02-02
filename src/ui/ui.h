@@ -17,17 +17,7 @@ enum View {
 	QUIT
 };
 
-static const char *view_names[] = {
-		"  List",
-		"Detail",
-		"  Help",
-		"   Add",
-		"  Edit",
-		"Delete",
-		"Search",
-		"  Sort",
-		"  Quit"
-};
+extern const char *view_names[9];
 
 enum Modes {
 	INSERT,
@@ -35,12 +25,9 @@ enum Modes {
 	COMMAND
 };
 
-static const char *mode_names[] = {
-		"INSERT",
-		"NORMAL",
-		"COMMAND"
-};
+extern const char *mode_names[3];
 
+extern const char *help_elemends[];
 struct Model {
 	linked_list *list;
 	node *current;
@@ -50,9 +37,15 @@ struct Model {
 	WINDOW *overview_window;
 	WINDOW *detail_window;
 	WINDOW *detail_text_window;
+	WINDOW *help_window;
+	WINDOW *help_text_window;
+	WINDOW *add_window;
+	WINDOW *add_text_window;
 	WINDOW *statusbar;
+
 	char *search_term;
 	enum Modes mode;
+	size_t help_page;
 };
 
 void usage(char *program_name);
@@ -70,6 +63,75 @@ void draw_border(WINDOW *window, char *title);
 void draw_overview(struct Model *model);
 
 void draw_detail(struct Model *model);
+
+void draw_help(struct Model *model);
+
+/**
+ * Draws the add view and start the add flow.
+ * @param model The model to update.
+ */
+void start_add_flow(struct Model *model);
+
+void start_add_manual_flow(struct Model *model);
+
+void start_add_github_flow(struct Model *model);
+
+/**
+ * Ui Text input.
+ * example for usage:
+ * @code
+ * char *buffer;
+ * ui_text_input(window, y, x, buffer);
+ * @endcode
+ * @param window The window to draw the input to.
+ * @param y The y position to start the input.
+ * @param x The x position to start the input.
+ * @param buffer The buffer to write the input to.
+ * @return The buffer.
+ */
+char *ui_text_input(WINDOW *window, int y, int x, char *buffer);
+
+uint32_t ui_uint32_t_input(WINDOW *window, int y, int x);
+
+typedef enum ui_okcancel_ {
+	UI_OK,
+	UI_CANCEL,
+	UI_RETRY
+} ui_okcancel;
+
+/**
+ * Ui Ok/Cancel dialog.
+ * example for usage:
+ * @code
+ * char *buffer;
+ * get_buffer:
+ * ui_text_input(window, y, x, buffer);
+ * switch(ui_ok_cancel(window, y+2, x, "Ok", "Cancel")) {
+ * 	case UI_OK:
+ * 		// do something
+ * 		break;
+ * 	case UI_CANCEL:
+ * 		// do something
+ * 		break;
+ * 	case UI_RETRY:
+ * 		goto get_buffer;
+ * }
+ * @endcode
+ * @param window The window to draw the dialog to.
+ * @param y The y position to start the dialog.
+ * @param x The x position to start the dialog.
+ * @param ok The text to display for the ok button.
+ * @param cancel The text to display for the cancel button.
+ * @return UI_OK if the user pressed ok, UI_CANCEL if the user pressed cancel and UI_RETRY if the user pressed retry.
+ */
+ui_okcancel ui_ok_cancel(WINDOW *window, int y, int x, const char *ok, const char *cancel);
+
+void draw_ok_cancel(WINDOW *window, int y, int x, const char *ok, const char *cancel);
+
+char *ui_open_vim(char *buffer);
+
+char *ui_open_nano(char *buffer);
+
 
 /**
  * Handles the input for the list view.
