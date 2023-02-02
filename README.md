@@ -59,9 +59,9 @@ base screen with selection options
 
 ### Required
 
-- [ ] Einlesen der Datei
+- [x] Einlesen der Datei
     - [x] Datei per CLI einlesen
-    - [ ] Datei per UI einlesen
+    - [x] Datei per UI einlesen
 - [x] Parsen der Datei
 - [x] Datensatz hinzufügen
 - [x] Datensatz löschen
@@ -79,9 +79,12 @@ base screen with selection options
 
 ### Extra
 
-- [ ] Einfügen von mehreren Datensätzen
+- [x] Einfügen von mehreren Datensätzen
+    - [x] Von Datei
+    - [ ] Unit Tests
+    - [ ] ~~UI Flow for adding multiple entries manually~~
 - [ ] Löschen von mehreren Datensätzen
-- [ ] Copy Datensatz -> edit_flow
+- [ ] Copy Datensatz into edit_flow
 - [ ] Sortierung Quicksort
 - [ ] Speichern mit Verschlüsselung
 - [ ] Entfernen doppelter Datensätze
@@ -91,3 +94,5 @@ base screen with selection options
     - [ ] get issues
 - [ ] Add Readme Parsing
     - see [cli/cli: GitHub’s official command line tool](https://github.com/cli/cli)
+    - maybe use [charmbracelet/glamour: Render markdown with style](https://github.com/charmbracelet/glamour) since it
+      is also used by cli/cli

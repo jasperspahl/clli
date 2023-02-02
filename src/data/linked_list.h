@@ -4,6 +4,12 @@
 #include <stddef.h>
 #include <stdbool.h>
 
+/**
+ * A node in a linked list.
+ * @param value The value of the node.
+ * @param next The next node in the linked list.
+ * @param previous The previous node in the linked list.
+ */
 typedef struct node_ node;
 struct node_ {
 	void *value;
@@ -11,12 +17,19 @@ struct node_ {
 	node *previous;
 };
 
+/**
+ * A linked list.
+ * @param head The first node in the linked list.
+ * @param tail The last node in the linked list.
+ * @param size The size of the linked list.
+ * @param free_value_fn A function to free the value of a node.
+ */
 typedef struct linked_list {
 	node *head;
 	node *tail;
 	int size;
 
-	void (*free_value)(void *);
+	void (*free_value_fn)(void *);
 } linked_list;
 
 /**
@@ -41,10 +54,20 @@ void print_list(linked_list *list, void (*print_value)(void *));
 
 /**
  * Frees the memory allocated for the linked list.
- * If `list->free_value` is not NULL, it will be called for each node in the linked list.
+ * If `list->free_value_fn` is not NULL, it will be called for each node in the linked list.
  * @param list The linked list to free.
  */
 void free_list(linked_list *list);
+
+/**
+ * Merges two linked lists.
+ * attaches the nodes of the second list to the first one
+ * @param list pointer to the first list
+ * @param list2
+ * @return a pointer to the merged list.
+ * This should be the same as list only if list is NULL, it will return list2
+ */
+linked_list *merge_lists(linked_list *list, linked_list *list2);
 
 /**
  * Removes a node from the linked list.

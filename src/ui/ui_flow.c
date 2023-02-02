@@ -225,17 +225,14 @@ void start_open_flow(struct Model *model) {
 		}
 	}
 	linked_list *l = read_file(filename);
-	node *current;
+	// l does not need to be freed, as it is either merged into the current list or freed in the else branch
 	if (ch == 'o' && l->head != NULL) {
-		free_list(model->list);
+		model->current = l->head;
 		model->list = l;
 		model->input_file = filename;
+		return; // do not free filename
 	} else if (l->head != NULL) {
-		current = l->head;
-		while (current != NULL) {
-			model->current = add_node(model->list, current->value);
-			current = current->next;
-		}
+		model->list = merge_lists(model->list, l);
 	} else {
 		wclear(model->popup_window);
 
@@ -244,8 +241,7 @@ void start_open_flow(struct Model *model) {
 
 		mvwprintw(model->popup_window, 5, 2, "press any key to continue.");
 		wgetch(model->popup_window);
-		free(filename);
+		free_list(l);
 	}
-	l->free_value = NULL;
-	free_list(l);
+	free(filename);
 }

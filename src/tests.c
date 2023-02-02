@@ -13,14 +13,14 @@ void test_ll_create(void) {
 	assert(list->head == NULL);
 	assert(list->tail == NULL);
 	assert(list->size == 0);
-	assert(list->free_value == NULL);
+	assert(list->free_value_fn == NULL);
 	free_list(list);
 	linked_list *list2 = create_linked_list(free);
 	assert(list2 != NULL);
 	assert(list2->head == NULL);
 	assert(list2->tail == NULL);
 	assert(list2->size == 0);
-	assert(list2->free_value == free);
+	assert(list2->free_value_fn == free);
 	free_list(list2);
 }
 

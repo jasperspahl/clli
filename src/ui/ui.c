@@ -67,8 +67,12 @@ void draw_screen(struct Model *model) {
 	// Draw the statusbar
 	wclear(model->statusbar);
 	wattron(model->statusbar, A_BOLD);
+	wattron(model->statusbar, A_REVERSE);
+	mvwhline(model->statusbar, 0, 0, ' ', getmaxx(model->statusbar));
 	mvwprintw(model->statusbar, 0, 1, "Mode: %s | Size of list: %d", view_names[model->view], model->list->size);
+	wattroff(model->statusbar, A_REVERSE);
 	wattroff(model->statusbar, A_BOLD);
+	mvwprintw(model->statusbar, 1, 1, "q:Quit  n:New  o:Open  d:Delete ?:Help");
 	wnoutrefresh(model->statusbar);
 
 	// Draw the overview window
@@ -192,15 +196,13 @@ const char *help_elements[] = {
 		"k: Move up",
 		"l: Move right",
 		"h: Move left",
-		"n, a: New entry",
+		"n: New entry",
 		"e: Edit entry",
 		"d: Delete entry",
-		"o: Sort",
+		"o: Open/Append from File",
+		"w: Write file",
 		"/: Search",
 		"?: Help",
-		/*"i: Insert mode",*/
-		/*"ESC: Normal mode",*/
-		/*":: Command mode",*/
 		"ENTER: Confirm",
 		"F10: Quit",
 		"J: next in Detail View",

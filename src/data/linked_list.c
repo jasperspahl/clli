@@ -23,7 +23,7 @@ linked_list *create_linked_list(void (*free_value)(void *)) {
 	list->head = NULL;
 	list->tail = NULL;
 	list->size = 0;
-	list->free_value = free_value;
+	list->free_value_fn = free_value;
 	return list;
 }
 
@@ -60,8 +60,8 @@ void free_list(linked_list *list) {
 	node *current = list->head;
 	while (current != NULL) {
 		node *next = current->next;
-		if (list->free_value != NULL) {
-			list->free_value(current->value);
+		if (list->free_value_fn != NULL) {
+			list->free_value_fn(current->value);
 		}
 		free(current);
 		current = next;
@@ -193,4 +193,25 @@ int get_index(linked_list *list, node *n) {
 
 bool node_exists(linked_list *list, node *n) {
 	return get_index(list, n) >= 0;
+}
+
+linked_list *merge_lists(linked_list *list, linked_list *list2) {
+	if (list == NULL) {
+		return list2;
+	}
+	if (list2 == NULL) {
+		return list;
+	}
+	if (list->tail != NULL) {
+		list->tail->next = list2->head;
+	}
+	if (list2->head != NULL) {
+		list2->head->previous = list->tail;
+	}
+	if (list->head == NULL) {
+		list->head = list2->head;
+	}
+	list->tail = list2->tail;
+	list->size += list2->size;
+	return list;
 }
