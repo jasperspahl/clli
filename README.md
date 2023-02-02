@@ -65,6 +65,7 @@ base screen with selection options
 - [x] Parsen der Datei
 - [x] Datensatz hinzufügen
 - [x] Datensatz löschen
+- [ ] Anzeigen der Linkedlist Pointer
 - [ ] Suche nach Datensatz
     - [ ] stringcompare selbst schreiben
         - [ ] unittests

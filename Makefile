@@ -47,6 +47,12 @@ $(PROJ_NAME)_tests: build/tests.o build/data/linked_list.o build/utils/test_util
 fetch_readme: build/fetch_readme_test.o build/utils/fetch_readme.o
 	$(CC) $(CFLAGS) $(LIBS) -o $@ $^
 
+.PHONY: docs
+docs:
+	doxygen Doxyfile
+	cd docs/latex
+	make pdf
+
 .PHONY: run
 run: $(PROJ_NAME)
 	./$(PROJ_NAME) test.data
