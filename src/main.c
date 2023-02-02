@@ -8,6 +8,7 @@
 #include "data/file_parsing.h"
 #include "data/data.h"
 #include "ui/ui.h"
+#include "ui/ui_flow.h"
 
 #include "utils/get_testdata.h"
 
@@ -18,7 +19,7 @@ void usage(char *program_name) {
 
 
 int main(int argc, char **argv) {
-	char *input_file;
+	char *input_file = NULL;
 	linked_list *list;
 	if (argc > 2 || (argc > 1 && strcmp(argv[1], "-h") == 0)) {
 		usage(argv[0]);
@@ -50,6 +51,7 @@ int main(int argc, char **argv) {
 			.previous_view = LIST,
 			.detail_pos = 0,
 			.help_page = 0,
+			.input_file = input_file,
 	};
 
 	// Initialize ncurses
@@ -112,6 +114,9 @@ int main(int argc, char **argv) {
 					model.view = DELETE;
 					start_delete_flow(&model);
 					break;
+				case 'o':
+					start_open_flow(&model);
+					break;
 				default:
 					break;
 			}
@@ -125,10 +130,11 @@ int main(int argc, char **argv) {
 
 	// Cleanup
 	end_ncurses();
-	if (argc == 2) {
-		write_file(input_file, list);
+	if (model.input_file != NULL) {
+		write_file(model.input_file, list);
+	} else {
+		write_file("output.bin", list);
 	}
-	write_file("output.bin", list);
-	//free_list(list);
+//	free_list(list);
 	return 0;
 }

@@ -1,7 +1,6 @@
 #include "ui.h"
 #include "../data/data.h"
 #include "../utils/editor_utils.h"
-#include "../utils/fetch_readme.h"
 
 #include <stdlib.h>
 #include <math.h>
@@ -103,7 +102,8 @@ void draw_screen(struct Model *model) {
 void draw_border(WINDOW *window, char *title) {
 	box(window, 0, 0);
 	wattron(window, A_BOLD);
-	mvwprintw(window, 0, 2, "%s", title);
+	if (title != NULL)
+		mvwprintw(window, 0, 2, "%s", title);
 	wattroff(window, A_BOLD);
 }
 
@@ -229,185 +229,6 @@ void draw_help(struct Model *model) {
 	wnoutrefresh(model->help_window);
 }
 
-void start_add_flow(struct Model *model) {
-	wclear(model->add_window);
-	draw_border(model->add_window, "Add");
-	mvwprintw(model->add_text_window, 1, 2, "a: Add project manually");
-	mvwprintw(model->add_text_window, 2, 2, "g: Add project from GitHub");
-	mvwprintw(model->add_text_window, 4, 2, "q: Quit");
-	wmove(model->add_window, 1, 8);
-	wrefresh(model->add_window);
-	int ch;
-	while ((ch = wgetch(model->add_window)) != 'q') {
-		switch (ch) {
-			case 'a':
-				start_add_manual_flow(model);
-				draw_screen(model);
-				return;
-			case 'g':
-				start_add_github_flow(model);
-				draw_screen(model);
-				return;
-			default:
-				break;
-		}
-	}
-	model->view = model->previous_view;
-}
-
-void start_add_manual_flow(struct Model *model) {
-	int ch;
-	char *name, *url, *description;
-	uint32_t stars, issues;
-	ui_okcancel status = UI_RETRY;
-	name = url = description = NULL;
-	wclear(model->add_text_window);
-
-	while (status == UI_RETRY) {
-		mvwprintw(model->add_text_window, 1, 2, "Name: ");
-		draw_ok_cancel(model->add_text_window, 4, 2, "OK", "Cancel");
-		wmove(model->add_text_window, 1, 8);
-
-		name = ui_text_input(model->add_text_window, 1, 8, name);
-		if (name == NULL || strlen(name) == 0) {
-			continue;
-		}
-
-		status = ui_ok_cancel(model->add_text_window, 4, 2, "OK", "Cancel");
-		if (status == UI_CANCEL) {
-			free(name);
-			return;
-		}
-	}
-
-	wclear(model->add_text_window);
-	status = UI_RETRY;
-	while (status == UI_RETRY) {
-		mvwprintw(model->add_text_window, 1, 2, "Url: ");
-		draw_ok_cancel(model->add_text_window, 4, 2, "OK", "Cancel");
-		wmove(model->add_text_window, 1, 7);
-
-		url = ui_text_input(model->add_text_window, 1, 7, url);
-		if (url == NULL || strlen(url) == 0) {
-			continue;
-		}
-
-		status = ui_ok_cancel(model->add_text_window, 4, 2, "OK", "Cancel");
-		if (status == UI_CANCEL) {
-			free(name);
-			free(url);
-			return;
-		}
-
-	}
-
-	wclear(model->add_text_window);
-	mvwprintw(model->add_text_window, 1, 2, "Add description: ");
-	mvwprintw(model->add_text_window, 2, 2, "v: open vim");
-	mvwprintw(model->add_text_window, 3, 2, "n: open nano");
-	mvwprintw(model->add_text_window, 4, 2, "s: skip");
-	bool move_on = false;
-	while (!move_on && (ch = wgetch(model->add_text_window)) != 's') {
-		switch (ch) {
-			case 'v':
-				description = ui_open_vim(fetch_readme(name));
-				move_on = true;
-				break;
-			case 'n':
-				description = ui_open_nano(fetch_readme(name));
-				move_on = true;
-				break;
-			default:
-				break;
-		}
-	}
-	// Rerender Everything after exiting editor
-	refresh();
-	clear();
-	draw_overview(model);
-	draw_detail(model);
-	doupdate();
-
-	wclear(model->add_text_window);
-	draw_border(model->add_window, "Add");
-	wrefresh(model->add_window);
-
-	status = UI_RETRY;
-	while (status == UI_RETRY) {
-		mvwprintw(model->add_text_window, 1, 2, "Stars: ");
-		draw_ok_cancel(model->add_text_window, 4, 2, "OK", "Cancel");
-		wmove(model->add_text_window, 1, 9);
-
-		stars = ui_uint32_t_input(model->add_text_window, 1, 9);
-
-		status = ui_ok_cancel(model->add_text_window, 4, 2, "OK", "Cancel");
-		if (status == UI_CANCEL) {
-			free(name);
-			free(description);
-			free(url);
-			return;
-		}
-	}
-
-	wclear(model->add_text_window);
-	status = UI_RETRY;
-	while (status == UI_RETRY) {
-		mvwprintw(model->add_text_window, 1, 2, "Issues: ");
-		draw_ok_cancel(model->add_text_window, 4, 2, "OK", "Cancel");
-		wmove(model->add_text_window, 1, 10);
-
-		issues = ui_uint32_t_input(model->add_text_window, 1, 10);
-
-		status = ui_ok_cancel(model->add_text_window, 4, 2, "OK", "Cancel");
-		if (status == UI_CANCEL) {
-			free(name);
-			free(description);
-			free(url);
-			return;
-		}
-	}
-
-	opensource_project *osp = create_opensource_project(name, description, url, stars, issues);
-	if (osp == NULL) {
-		free(name);
-		free(description);
-		free(url);
-		return;
-	}
-	model->current = add_node(model->list, osp);
-	model->view = model->previous_view;
-}
-
-
-void start_add_github_flow(struct Model *model) {
-	// TODO: Implement
-	model->view = model->previous_view;
-}
-
-void start_delete_flow(struct Model *model) {
-	wclear(model->popup_window);
-	opensource_project *osp = model->current->value;
-	draw_border(model->popup_window, "Delete");
-	mvwprintw(model->popup_window, 2, 2, "Are you sure you want to delete ");
-	wattron(model->popup_window, A_BOLD);
-	wprintw(model->popup_window, "%s", osp->name);
-	wattroff(model->popup_window, A_BOLD);
-	wprintw(model->popup_window, "?");
-
-	draw_ok_cancel(model->popup_window, 5, 2, "OK", "Cancel");
-	wrefresh(model->popup_window);
-	ui_okcancel result;
-	while ((result = ui_ok_cancel(model->popup_window, 5, 2, "OK", "Cancel")) == UI_RETRY) {
-		// do nothing
-	}
-	if (result == UI_OK) {
-		node *next = model->current->next;
-		remove_node(model->list, model->current);
-		model->current = next;
-	}
-	model->view = model->previous_view;
-
-}
 
 char *ui_open_vim(char *buffer) {
 	return editor_edit(buffer, "nvim +\"set ft=markdown\"");

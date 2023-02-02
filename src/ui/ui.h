@@ -37,6 +37,7 @@ struct Model {
 	WINDOW *statusbar;
 
 	char *search_term;
+	char *input_file;
 	size_t help_page;
 	int detail_pos;
 };
@@ -63,17 +64,6 @@ void select_next(struct Model *model);
 
 void select_previous(struct Model *model);
 
-/**
- * Draws the add view and start the add flow.
- * @param model The model to update.
- */
-void start_add_flow(struct Model *model);
-
-void start_add_manual_flow(struct Model *model);
-
-void start_add_github_flow(struct Model *model);
-
-void start_delete_flow(struct Model *model);
 
 /**
  * Ui Text input.
