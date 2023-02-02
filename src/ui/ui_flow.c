@@ -49,14 +49,15 @@ void start_add_manual_flow(struct Model *model) {
 		wmove(model->add_text_window, 1, 8);
 
 		name = ui_text_input(model->add_text_window, 1, 8, name);
-		if (name == NULL || strlen(name) == 0) {
-			continue;
-		}
 
 		status = ui_ok_cancel(model->add_text_window, 4, 2, "OK", "Cancel");
 		if (status == UI_CANCEL) {
 			free(name);
 			return;
+		}
+		if (name == NULL || strlen(name) == 0) {
+			status = UI_RETRY;
+			continue;
 		}
 	}
 
@@ -68,15 +69,16 @@ void start_add_manual_flow(struct Model *model) {
 		wmove(model->add_text_window, 1, 7);
 
 		url = ui_text_input(model->add_text_window, 1, 7, url);
-		if (url == NULL || strlen(url) == 0) {
-			continue;
-		}
 
 		status = ui_ok_cancel(model->add_text_window, 4, 2, "OK", "Cancel");
 		if (status == UI_CANCEL) {
 			free(name);
 			free(url);
 			return;
+		}
+		if (url == NULL || strlen(url) == 0) {
+			status = UI_RETRY;
+			continue;
 		}
 
 	}
@@ -158,7 +160,6 @@ void start_add_manual_flow(struct Model *model) {
 	model->view = model->previous_view;
 }
 
-
 void start_add_github_flow(struct Model *model) {
 	// TODO: Implement
 	model->view = model->previous_view;
@@ -176,6 +177,7 @@ void start_delete_flow(struct Model *model) {
 
 	draw_ok_cancel(model->popup_window, 5, 2, "OK", "Cancel");
 	wrefresh(model->popup_window);
+
 	ui_okcancel result;
 	while ((result = ui_ok_cancel(model->popup_window, 5, 2, "OK", "Cancel")) == UI_RETRY) {
 		// do nothing
@@ -211,15 +213,22 @@ void start_open_flow(struct Model *model) {
 			selected = true;
 		}
 	}
+	if (!selected) {
+		return;// user cancelled
+	}
 	wclear(model->popup_window);
 
 	draw_border(model->popup_window, mode_name);
-	draw_ok_cancel(model->popup_window, 5, 2, "Ok", "Cancel");
-	mvwprintw(model->popup_window, 2, 2, "File: ");
-
 	while (ui_res == UI_RETRY) {
+		draw_ok_cancel(model->popup_window, 5, 2, "Ok", "Cancel");
+		mvwprintw(model->popup_window, 2, 2, "File: ");
+
 		filename = ui_text_input(model->popup_window, 2, 8, filename);
 		ui_res = ui_ok_cancel(model->popup_window, 5, 2, "Ok", "Cancel");
+		if (ui_res == UI_CANCEL) {
+			if (filename != NULL) free(filename);
+			return;
+		}
 		if (filename == NULL || strlen(filename) == 0 || !file_exists(filename)) {
 			ui_res = UI_RETRY;
 		}
@@ -243,5 +252,5 @@ void start_open_flow(struct Model *model) {
 		wgetch(model->popup_window);
 		free_list(l);
 	}
-	free(filename);
+	if (filename != NULL) free(filename);
 }

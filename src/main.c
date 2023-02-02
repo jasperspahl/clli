@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <strings.h>
 #include <ncurses.h>
 
 #include "data/linked_list.h"
@@ -9,8 +8,6 @@
 #include "data/data.h"
 #include "ui/ui.h"
 #include "ui/ui_flow.h"
-
-#include "utils/get_testdata.h"
 
 void usage(char *program_name) {
 	printf("Usage: %s [<filename>]\n", program_name);
@@ -29,19 +26,6 @@ int main(int argc, char **argv) {
 		list = read_file(input_file);
 	} else {
 		list = create_linked_list(free_opensource_project);
-	}
-
-	if (list->size == 0) {
-		opensource_project *osp =
-				create_opensource_project("LibreCuisine",
-				                          "A Cookbook Web Application based on the Microservices",
-				                          "https://github.com/LibreCuisine/LibreCuisine", 1, 8);
-		add_node(list, osp);
-		opensource_project **osp_list = get_testdata_set();
-		while (*osp_list != NULL) {
-			add_node(list, *osp_list);
-			osp_list++;
-		}
 	}
 
 	struct Model model = {
