@@ -113,12 +113,13 @@ int main(int argc, char **argv) {
 
 
 	// Cleanup
+	keypad(stdscr, false);
 	end_ncurses();
 	if (model.input_file != NULL) {
 		write_file(model.input_file, list);
 	} else {
 		write_file("output.bin", list);
 	}
-//	free_list(list);
+
 	return 0;
 }
