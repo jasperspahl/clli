@@ -70,10 +70,18 @@ void free_list(linked_list *list);
 linked_list *merge_lists(linked_list *list, linked_list *list2);
 
 /**
+ * Removes a node and frees the value of the node.
+ * @param list The linked list to remove the node from.
+ * @param node The note to remove.
+ */
+#define remove_node_free(list, node) free(remove_node(list, node))
+
+/**
  * Removes a node from the linked list.
  * frees the memory allocated for the node.
  * Precondition: The node must exist in the linked list else program fail in `assert`.
  * @param list The linked list to remove the node from.
+ * @param n the element to remove.
  * @return the value of the removed node.
  */
 void *remove_node(linked_list *list, node *n);
@@ -81,6 +89,7 @@ void *remove_node(linked_list *list, node *n);
 /**
  * Removes the node at the given index and returns its value.
  * Precondition: The index must be within the bounds of the linked list else program fail in `assert`.
+ * @warning The value of the node gets return if you don't use it please free it.
  * @param list The linked list to get the node from.
  * @param index The index of the node to get.
  * @return The value of the removed node.

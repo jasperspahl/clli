@@ -121,5 +121,6 @@ int main(int argc, char **argv) {
 		write_file("output.bin", list);
 	}
 
+	free_list(list);
 	return 0;
 }

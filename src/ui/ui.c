@@ -1,6 +1,6 @@
 #include "ui.h"
-#include "../data/data.h"
-#include "../utils/editor_utils.h"
+#include "data/data.h"
+#include "utils/editor_utils.h"
 
 #include <stdlib.h>
 #include <math.h>
@@ -74,7 +74,7 @@ void draw_screen(struct Model *model) {
 	mvwprintw(model->statusbar, 0, 1, "Mode: %s | Size of list: %d", view_names[model->view], model->list->size);
 	wattroff(model->statusbar, A_REVERSE);
 	wattroff(model->statusbar, A_BOLD);
-	mvwprintw(model->statusbar, 1, 1, "q:Quit  n:New  o:Open  d:Delete ?:Help");
+	mvwprintw(model->statusbar, 1, 1, "q:Quit  n:New  o:Open  d:Delete  ?:Help");
 	wnoutrefresh(model->statusbar);
 
 	// Draw the overview window

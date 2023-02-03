@@ -7,11 +7,19 @@
 
 
 void test_fn(void (*fn)(void), char *name) {
-	printf("Testing %s...", name);
+	printf("\tTesting %s...", name);
 	clock_t start = clock();
 	fn();
 	clock_t end = clock();
 	printf("OK took %.5f sec\n", (double) (end - start) / CLOCKS_PER_SEC);
+}
+
+void test_suite_fn(void (*test_suite)(void), char *name) {
+	printf("Running test suite %s...\n", name);
+	clock_t start = clock();
+	test_suite();
+	clock_t end = clock();
+	printf("Test suite %s finished after %.5f sec\n", name, (double) (end - start) / CLOCKS_PER_SEC);
 }
 
 void free_int(void *value) {
@@ -31,3 +39,4 @@ linked_list *create_int_list(const int *values, size_t size) {
 int compare_ints(const void *a, const void *b) {
 	return *(int *) a - *(int *) b;
 }
+

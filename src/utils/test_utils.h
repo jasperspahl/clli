@@ -1,9 +1,10 @@
 #ifndef PROJEKT_TEST_UTILS_H
 #define PROJEKT_TEST_UTILS_H
 
-#include "../data/linked_list.h"
+#include "data/linked_list.h"
 
 #define TEST(x) test_fn(x, #x)
+#define RUN_TEST_SUITE(test_suite) test_suite_fn(test_suite, #test_suite)
 #define qll() create_linked_list(NULL)
 
 /**
@@ -12,6 +13,13 @@
  * @param name The name of the function.
  */
 void test_fn(void (*fn)(void), char *name);
+
+/**
+ * Runs the given test suite and prints the result.
+ * @param test_suite The test suite to run.
+ * @param name The name of the test suite.
+ */
+void test_suite_fn(void (*test_suite)(void), char *name);
 
 void free_int(void *value);
 

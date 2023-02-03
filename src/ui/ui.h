@@ -3,7 +3,7 @@
 
 #include <ncurses.h>
 #include <stdbool.h>
-#include "../data/linked_list.h"
+#include "data/linked_list.h"
 
 enum View {
 	LIST,

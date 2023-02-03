@@ -48,7 +48,7 @@ char *fetch_readme(char *repo) {
 	struct curl_slist *headers = NULL;
 	headers = curl_slist_append(headers, "Accept: application/vnd.github.raw");
 
-	char *url = malloc(strlen(repo) + 36);
+	char *url = malloc(strlen(repo) + 37);
 	strcpy(url, "https://api.github.com/repos/");
 	strcat(url, repo);
 	strcat(url, "/readme");

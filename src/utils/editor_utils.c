@@ -8,7 +8,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#include <unistr.h>
 #include <unistd.h>
 #include <wait.h>
 #include <time.h>

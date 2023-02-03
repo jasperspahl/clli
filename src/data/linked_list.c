@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <assert.h>
 
-
 /* INTERN ONLY------------------------------------------------ */
 typedef struct {
 	node *left;
@@ -63,6 +62,8 @@ void free_list(linked_list *list) {
 		if (list->free_value_fn != NULL) {
 			list->free_value_fn(current->value);
 		}
+		if (next != NULL)
+			next->previous = NULL; // this is to prevent a pointer to a freed memory block
 		free(current);
 		current = next;
 	}
@@ -213,5 +214,6 @@ linked_list *merge_lists(linked_list *list, linked_list *list2) {
 	}
 	list->tail = list2->tail;
 	list->size += list2->size;
+	free(list2);
 	return list;
 }

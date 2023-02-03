@@ -1,9 +1,9 @@
 #include "ui_flow.h"
 #include "ui.h"
-#include "../utils/fetch_readme.h"
-#include "../data/data.h"
-#include "../utils/files.h"
-#include "../data/file_parsing.h"
+#include "utils/fetch_readme.h"
+#include "data/data.h"
+#include "utils/files.h"
+#include "data/file_parsing.h"
 
 #include <stdlib.h>
 #include <ncurses.h>
@@ -18,16 +18,17 @@ void start_add_flow(struct Model *model) {
 	wmove(model->add_window, 1, 8);
 	wrefresh(model->add_window);
 	int ch;
-	while ((ch = wgetch(model->add_window)) != 'q') {
+	bool loop_again = true;
+	while (loop_again && (ch = wgetch(model->add_window)) != 'q') {
 		switch (ch) {
 			case 'a':
 				start_add_manual_flow(model);
-				draw_screen(model);
-				return;
+				loop_again = false;
+				break;
 			case 'g':
 				start_add_github_flow(model);
-				draw_screen(model);
-				return;
+				loop_again = false;
+				break;
 			default:
 				break;
 		}
@@ -38,9 +39,9 @@ void start_add_flow(struct Model *model) {
 void start_add_manual_flow(struct Model *model) {
 	int ch;
 	char *name, *url, *description;
+	name = url = NULL;
 	uint32_t stars, issues;
 	ui_okcancel status = UI_RETRY;
-	name = url = description = NULL;
 	wclear(model->add_text_window);
 
 	while (status == UI_RETRY) {
@@ -163,7 +164,6 @@ void start_add_manual_flow(struct Model *model) {
 		return;
 	}
 	model->current = add_node(model->list, osp);
-	model->view = model->previous_view;
 }
 
 void start_add_github_flow(struct Model *model) {
@@ -173,6 +173,7 @@ void start_add_github_flow(struct Model *model) {
 
 void start_delete_flow(struct Model *model) {
 	wclear(model->popup_window);
+	if (model->current == NULL) return;
 	opensource_project *osp = model->current->value;
 	draw_border(model->popup_window, "Delete");
 	mvwprintw(model->popup_window, 2, 2, "Are you sure you want to delete ");
@@ -189,8 +190,11 @@ void start_delete_flow(struct Model *model) {
 		// do nothing
 	}
 	if (result == UI_OK) {
-		node *next = model->current->next;
-		remove_node(model->list, model->current);
+		node *next = model->current->next;      /*******************************************************/
+		if (next == NULL) {                     /* This keeps the current on the same index except if  */
+			next = model->current->previous;    /* the node to delete is the last of the list          */
+		}                                       /*******************************************************/
+		remove_node_free(model->list, model->current);
 		model->current = next;
 	}
 	model->view = model->previous_view;

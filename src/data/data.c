@@ -25,25 +25,6 @@ create_opensource_project(const char *name, const char *description, const char 
 	return project;
 }
 
-/**
- * Serialize the data to file
- * data of an osp gets stored like this:
- * @example
- * @code{.c}
- * struct osp_buffer {
- * 	size_t name_length;
- * 	char name[name_length];
- * 	size_t desc_length;
- * 	char description[desc_length];
- * 	size_t url_length;
- * 	char url[url_length];
- * 	uint32_t stars;
- * 	uint32_t issues;
- * };
- * @endcode
- * @param value
- * @param file
- */
 void serialize_opensource_project(void *value, FILE *file) {
 	opensource_project *project = value;
 	if (project == NULL) {
@@ -86,12 +67,13 @@ opensource_project *deserialize_opensource_project(FILE *file) {
 		return NULL;
 	}
 	if (name_length > 0) {
-		project->name = malloc(sizeof(char) * name_length);
+		project->name = malloc(sizeof(char) * name_length + 1);
 		if (fread(project->name, sizeof(char), name_length, file) != name_length) {
 			free(project->name);
 			free(project);
 			return NULL;
 		}
+		project->name[name_length] = '\0';
 	}
 	// Read length of description, allocate memory for description and read description
 	if (fread(&description_length, sizeof(size_t), 1, file) != 1) {
@@ -100,13 +82,14 @@ opensource_project *deserialize_opensource_project(FILE *file) {
 		return NULL;
 	}
 	if (description_length > 0) {
-		project->description = malloc(sizeof(char) * description_length);
+		project->description = malloc(sizeof(char) * description_length + 1);
 		if (fread(project->description, sizeof(char), description_length, file) != description_length) {
 			free(project->name);
 			free(project->description);
 			free(project);
 			return NULL;
 		}
+		project->description[description_length] = '\0';
 	}
 	// Read length of url, allocate memory for url and read url
 	if (fread(&url_length, sizeof(size_t), 1, file) != 1) {
@@ -116,7 +99,7 @@ opensource_project *deserialize_opensource_project(FILE *file) {
 		return NULL;
 	}
 	if (url_length > 0) {
-		project->url = malloc(sizeof(char) * url_length);
+		project->url = malloc(sizeof(char) * url_length + 1);
 		if (fread(project->url, sizeof(char), url_length, file) != url_length) {
 			free(project->name);
 			free(project->description);
@@ -124,6 +107,7 @@ opensource_project *deserialize_opensource_project(FILE *file) {
 			free(project);
 			return NULL;
 		}
+		project->url[url_length] = '\0';
 	}
 	// Read stars and issues
 	fread(&project->stars, sizeof(uint32_t), 1, file);
