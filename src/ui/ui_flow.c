@@ -4,6 +4,7 @@
 #include "data/data.h"
 #include "utils/files.h"
 #include "data/file_parsing.h"
+#include "data/data_compare.h"
 
 #include <stdlib.h>
 #include <ncurses.h>
@@ -264,4 +265,74 @@ void start_open_flow(struct Model *model) {
 		free_list(l);
 	}
 	if (filename != NULL) free(filename);
+}
+
+void start_sort_flow(struct Model *model) {
+	wclear(model->popup_window);
+
+	draw_border(model->popup_window, "Sort by");
+	mvwprintw(model->popup_window, 1, 2, "n: name");
+	mvwprintw(model->popup_window, 2, 2, "u: url");
+	mvwprintw(model->popup_window, 3, 2, "s: stars");
+	mvwprintw(model->popup_window, 4, 2, "i: issues");
+	mvwprintw(model->popup_window, 5, 2, "q: cancel");
+
+
+	int ch;
+	enum SortBy sb;
+	bool selected = false;
+	while (!selected && (ch = wgetch(model->popup_window)) != 'q') {
+		switch (ch) {
+			case 'n':
+				sb = NAME;
+				selected = true;
+				break;
+			case 'u':
+				sb = URL;
+				selected = true;
+				break;
+			case 's':
+				sb = STARS;
+				selected = true;
+				break;
+			case 'i':
+				sb = ISSUES;
+				selected = true;
+				break;
+			default:
+				break;
+		}
+	}
+	if (!selected) {
+		return;// user cancelled
+	}
+
+	wclear(model->popup_window);
+
+	draw_border(model->popup_window, "Order by");
+	mvwprintw(model->popup_window, 2, 2, "a: Ascending");
+	mvwprintw(model->popup_window, 3, 2, "d: Descending");
+	mvwprintw(model->popup_window, 5, 2, "q: cancel");
+
+	enum SortOrder so;
+	selected = false;
+	while (!selected && (ch = wgetch(model->popup_window)) != 'q') {
+		switch (ch) {
+			case 'a':
+				so = ASC;
+				selected = true;
+				break;
+			case 'd':
+				so = DESC;
+				selected = true;
+				break;
+			default:
+				break;
+		}
+	}
+	if (!selected) {
+		return;// user cancelled
+	}
+
+	sort_list(model->list, get_sort_fn(sb, so));
 }

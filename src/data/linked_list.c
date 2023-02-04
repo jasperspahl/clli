@@ -102,6 +102,7 @@ void *remove_node_at(linked_list *list, int index) {
 
 void sort_list(linked_list *list, int (*compare)(const void *, const void *)) {
 	// TODO: implement quicksort
+	sort_list_bubble(list, compare);
 }
 
 void sort_list_bubble(linked_list *list, int (*compare)(const void *, const void *)) {

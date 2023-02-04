@@ -68,12 +68,12 @@ base screen with selection options
 - [x] Datensatz löschen
 - [x] Anzeigen der Linkedlist Pointer
 - [ ] Suche nach Datensatz
-    - [ ] stringcompare selbst schreiben
+    - [x] stringcompare selbst schreiben
         - [ ] unittests
-    - [ ] Daten sortieren
+    - [x] Daten sortieren
         - [x] Sortierfunktion Linkliste
             - [x] Unit Tests
-        - [ ] Implement UI
+        - [x] Implement UI
 - [x] Daten Speichern
     - [x] On Close
     - [ ] On Demand
@@ -98,11 +98,12 @@ base screen with selection options
     - see [cli/cli: GitHub’s official command line tool](https://github.com/cli/cli)
     - maybe use [charmbracelet/glamour: Render markdown with style](https://github.com/charmbracelet/glamour) since it
       is also used by cli/cli
-- [ ] Add the posibility to highlight hex numbers in hex mode 
+- [ ] Add the posibility to highlight hex numbers in hex mode
 
 ## Q&A
 
 Wie geh ich mit const arrays um die für enum to string brauche?
+
 ```c
 enum Test {
     ABC,

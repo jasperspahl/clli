@@ -201,27 +201,27 @@ void draw_detail(struct Model *model) {
 	);
 }
 
-const char *help_elements[] = {
-		"q: Quit",
-		"j: Move down",
-		"k: Move up",
-		"l: Move right",
-		"h: Move left",
-		"n: New entry",
-		"e: Edit entry",
-		"d: Delete entry",
-		"o: Open/Append from File",
-		"w: Write file",
-		"x: Toggle hex view",
-		"/: Search",
-		"?: Help",
-		"ENTER: Confirm",
-		"F10: Quit",
-		"J: next in Detail View",
-		"K: previous in Detail View",
-};
-
 void draw_help(struct Model *model) {
+	const char *help_elements[] = {
+			"q: Quit",
+			"j: Move down",
+			"k: Move up",
+			"l: Move right",
+			"h: Move left",
+			"n: New entry",
+			"e: Edit entry",
+			"d: Delete entry",
+			"o: Open/Append from File",
+			"w: Write file",
+			"x: Toggle hex view",
+			"s: Sort entries",
+			"/: Search",
+			"?: Help",
+			"ENTER: Confirm",
+			"F10: Quit",
+			"J: next in Detail View",
+			"K: previous in Detail View",
+	};
 	wclear(model->help_text_window);
 	int max_y = getmaxy(model->help_text_window);
 	size_t elements = sizeof(help_elements) / sizeof(help_elements[0]);

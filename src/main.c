@@ -101,6 +101,9 @@ int main(int argc, char **argv) {
 				case 'o':
 					start_open_flow(&model);
 					break;
+				case 's':
+					start_sort_flow(&model);
+					break;
 				case 'x':
 					model.show_hex = !model.show_hex;
 				default:

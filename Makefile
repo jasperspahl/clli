@@ -25,6 +25,7 @@ build/ui/ui_flow.o: src/ui/ui_flow.c src/ui/ui_flow.h src/ui/ui.h src/utils/file
 
 # Data
 build/data/data.o: src/data/data.c src/data/data.h src/data/linked_list.h
+build/data/data_compare.o: src/data/data_compare.c src/data/data_compare.h src/data/data.h src/utils/string_utils.h
 build/data/linked_list.o: src/data/linked_list.c src/data/linked_list.h
 build/data/file_parsing.o: src/data/file_parsing.c src/data/file_parsing.h src/data/linked_list.h src/data/data.h
 
@@ -38,7 +39,7 @@ build/main.o: src/main.c src/data/linked_list.h src/data/file_parsing.h src/data
 build/fetch_readme_test.o: src/fetch_readme_test.c src/utils/fetch_readme.h
 
 # Executables
-$(PROJ_NAME): build/main.o build/data/linked_list.o build/data/file_parsing.o build/data/data.o build/ui/ui.o build/utils/editor_utils.o build/utils/fetch_readme.o build/ui/ui_flow.o build/utils/files.o
+$(PROJ_NAME): build/main.o build/data/linked_list.o build/data/file_parsing.o build/data/data.o build/ui/ui.o build/utils/editor_utils.o build/utils/fetch_readme.o build/ui/ui_flow.o build/utils/files.o build/utils/string_utils.o build/data/data_compare.o
 	$(CC) $(CFLAGS) $(LIBS) -o $@ $^
 
 $(PROJ_NAME)_tests: build/tests.o build/data/linked_list.o build/utils/test_utils.o build/tests/linkedlist_tests.o build/tests/string_function_tests.o build/utils/string_utils.o

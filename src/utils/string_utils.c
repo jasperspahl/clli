@@ -32,6 +32,25 @@ int find_first_string_like(const char *src, const char *to_find) {
 	return -1;
 }
 
+int stringcompare(const char *a, const char *b) {
+	while (*a != '\0' || *b != '\0') {
+		if (*a < *b) {
+			return -1;
+		} else if (*a > *b) {
+			return 1;
+		}
+		a++;
+		b++;
+	}
+	if (*a == '\0' && *b == '\0') {
+		return 0;
+	} else if (*a == '\0') {
+		return -1;
+	} else {
+		return 1;
+	}
+}
+
 bool string_equals(const char *a, const char *b) {
 	while (*a != '\0' || *b != '\0') {
 		if (*a != *b) {

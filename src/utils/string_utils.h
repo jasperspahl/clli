@@ -27,6 +27,14 @@ int find_first_string_like(const char *src, const char *to_find);
 
 /**
  * Compares two strings.
+ * @returns 0 if a and b are equal.
+ * @returns -1 if a is smaller than b.
+ * @returns 1 if a is bigger than b.
+ */
+int stringcompare(const char *a, const char *b);
+
+/**
+ * Compares two strings.
  * @retruns true if a and b are equal.
  * @retruns false if a and b are not equal.
  */
