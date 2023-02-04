@@ -40,6 +40,7 @@ struct Model {
 	char *input_file;
 	size_t help_page;
 	int detail_pos;
+	bool show_hex;
 };
 
 void usage(char *program_name);
@@ -57,6 +58,8 @@ void draw_border(WINDOW *window, char *title);
 void draw_overview(struct Model *model);
 
 void draw_detail(struct Model *model);
+
+void draw_hex(struct Model *model);
 
 void draw_help(struct Model *model);
 

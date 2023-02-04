@@ -64,8 +64,9 @@ base screen with selection options
     - [x] Datei per UI einlesen
 - [x] Parsen der Datei
 - [x] Datensatz hinzufügen
+    - [ ] Inset @ position
 - [x] Datensatz löschen
-- [ ] Anzeigen der Linkedlist Pointer
+- [x] Anzeigen der Linkedlist Pointer
 - [ ] Suche nach Datensatz
     - [ ] stringcompare selbst schreiben
         - [ ] unittests
@@ -81,6 +82,7 @@ base screen with selection options
 
 - [x] Einfügen von mehreren Datensätzen
     - [x] Von Datei
+    - [ ] Einlesen von txt files mit comments
     - [ ] Unit Tests
     - [ ] ~~UI Flow for adding multiple entries manually~~
 - [ ] Löschen von mehreren Datensätzen
@@ -96,3 +98,18 @@ base screen with selection options
     - see [cli/cli: GitHub’s official command line tool](https://github.com/cli/cli)
     - maybe use [charmbracelet/glamour: Render markdown with style](https://github.com/charmbracelet/glamour) since it
       is also used by cli/cli
+- [ ] Add the posibility to highlight hex numbers in hex mode 
+
+## Q&A
+
+Wie geh ich mit const arrays um die für enum to string brauche?
+```c
+enum Test {
+    ABC,
+    DEF,
+}
+const char * nameOfTest[] = {
+    "ABC",
+    "DEF"
+};
+```

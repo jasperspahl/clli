@@ -17,9 +17,9 @@ void start_add_flow(struct Model *model) {
 	mvwprintw(model->add_text_window, 4, 2, "q: Quit");
 	wmove(model->add_window, 1, 8);
 	wrefresh(model->add_window);
-	int ch;
 	bool loop_again = true;
-	while (loop_again && (ch = wgetch(model->add_window)) != 'q') {
+	int ch = wgetch(model->add_window);
+	while (loop_again && ch != 'q') {
 		switch (ch) {
 			case 'a':
 				start_add_manual_flow(model);
@@ -30,6 +30,7 @@ void start_add_flow(struct Model *model) {
 				loop_again = false;
 				break;
 			default:
+				ch = wgetch(model->add_window);
 				break;
 		}
 	}

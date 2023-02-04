@@ -16,8 +16,8 @@ void usage(char *program_name) {
 
 
 int main(int argc, char **argv) {
-	char *input_file = NULL;
 	linked_list *list;
+	char *input_file = NULL;
 	if (argc > 2 || (argc > 1 && strcmp(argv[1], "-h") == 0)) {
 		usage(argv[0]);
 	}
@@ -101,12 +101,15 @@ int main(int argc, char **argv) {
 				case 'o':
 					start_open_flow(&model);
 					break;
+				case 'x':
+					model.show_hex = !model.show_hex;
 				default:
 					break;
 			}
 
 		}
 		// Draw the screen
+		refresh();
 		draw_screen(&model);
 	}
 

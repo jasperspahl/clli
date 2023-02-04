@@ -173,11 +173,19 @@ void draw_detail(struct Model *model) {
 		mvwprintw(model->detail_text_window, 1, max_x - 13, "Issues: %5d", osp->issues);
 		mvwhline(model->detail_text_window, 2, 0, ACS_HLINE, max_x);
 		wclear(model->detail_text_pad);
-		mvwaddstr(model->detail_text_pad, 0, 0, osp->description);
+		if (model->show_hex) {
+			draw_hex(model);
+		} else {
+			mvwaddstr(model->detail_text_pad, 0, 0, osp->description);
+		}
 	}
 	if (model->view == DETAIL) {
 		wattron(model->detail_window, A_REVERSE);
 		draw_border(model->detail_window, "Detail");
+		wattroff(model->detail_window, A_REVERSE);
+	} else if (model->show_hex) {
+		wattron(model->detail_window, A_REVERSE);
+		draw_border(model->detail_window, "Hex");
 		wattroff(model->detail_window, A_REVERSE);
 	} else {
 		draw_border(model->detail_window, "Detail");
@@ -204,6 +212,7 @@ const char *help_elements[] = {
 		"d: Delete entry",
 		"o: Open/Append from File",
 		"w: Write file",
+		"x: Toggle hex view",
 		"/: Search",
 		"?: Help",
 		"ENTER: Confirm",
@@ -481,4 +490,19 @@ bool handle_help_input(struct Model *model, int ch) {
 			break;
 	}
 	return false;
+}
+
+void draw_hex(struct Model *model) { // UP_HEX
+	node *current = model->list->head;
+	int i = 0;
+	while (current != NULL) {
+		mvwprintw(model->detail_text_pad, i, 0,
+		          "%3d: %p 👆: %14p 👇: %14p",
+		          i,
+		          (void *) current,
+		          (void *) current->previous,
+		          (void *) current->next);
+		current = current->next;
+		i++;
+	}
 }
