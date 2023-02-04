@@ -271,11 +271,11 @@ void start_sort_flow(struct Model *model) {
 	wclear(model->popup_window);
 
 	draw_border(model->popup_window, "Sort by");
-	mvwprintw(model->popup_window, 1, 2, "n: name");
-	mvwprintw(model->popup_window, 2, 2, "u: url");
-	mvwprintw(model->popup_window, 3, 2, "s: stars");
-	mvwprintw(model->popup_window, 4, 2, "i: issues");
-	mvwprintw(model->popup_window, 5, 2, "q: cancel");
+	mvwprintw(model->popup_window, 1, 4, "n: Name");
+	mvwprintw(model->popup_window, 2, 4, "u: Url");
+	mvwprintw(model->popup_window, 3, 4, "s: Stars");
+	mvwprintw(model->popup_window, 4, 4, "i: Issues");
+	mvwprintw(model->popup_window, 6, 4, "q: Cancel");
 
 
 	int ch;
@@ -310,9 +310,9 @@ void start_sort_flow(struct Model *model) {
 	wclear(model->popup_window);
 
 	draw_border(model->popup_window, "Order by");
-	mvwprintw(model->popup_window, 2, 2, "a: Ascending");
-	mvwprintw(model->popup_window, 3, 2, "d: Descending");
-	mvwprintw(model->popup_window, 5, 2, "q: cancel");
+	mvwprintw(model->popup_window, 2, 4, "a: Ascending");
+	mvwprintw(model->popup_window, 3, 4, "d: Descending");
+	mvwprintw(model->popup_window, 6, 4, "q: cancel");
 
 	enum SortOrder so;
 	selected = false;

@@ -7,7 +7,7 @@ PROJ_NAME=clli
 LIBS=-lm -lncurses -lcurl
 
 .PHONY: all
-all: $(PROJ_NAME) $(PROJ_NAME)_tests test run
+all: test run
 
 build/%.o: src/%.c
 	$(CC) $(CFLAGS) -c -o $@ $<

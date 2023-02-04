@@ -179,16 +179,13 @@ void draw_detail(struct Model *model) {
 			mvwaddstr(model->detail_text_pad, 0, 0, osp->description);
 		}
 	}
+	char *title = model->show_hex ? "Hex" : "Detail";
 	if (model->view == DETAIL) {
 		wattron(model->detail_window, A_REVERSE);
-		draw_border(model->detail_window, "Detail");
-		wattroff(model->detail_window, A_REVERSE);
-	} else if (model->show_hex) {
-		wattron(model->detail_window, A_REVERSE);
-		draw_border(model->detail_window, "Hex");
+		draw_border(model->detail_window, title);
 		wattroff(model->detail_window, A_REVERSE);
 	} else {
-		draw_border(model->detail_window, "Detail");
+		draw_border(model->detail_window, title);
 	}
 	wnoutrefresh(model->detail_window);
 	pnoutrefresh(model->detail_text_pad, // source pad
@@ -496,12 +493,19 @@ void draw_hex(struct Model *model) { // UP_HEX
 	node *current = model->list->head;
 	int i = 0;
 	while (current != NULL) {
+		if (current == model->current) {
+			wattron(model->detail_text_pad, A_REVERSE);
+			mvwhline(model->detail_text_pad, i, 0, ' ', getmaxx(model->detail_text_pad));
+		}
 		mvwprintw(model->detail_text_pad, i, 0,
 		          "%3d: %p 👆: %14p 👇: %14p",
 		          i,
 		          (void *) current,
 		          (void *) current->previous,
 		          (void *) current->next);
+		if (current == model->current) {
+			wattroff(model->detail_text_pad, A_REVERSE);
+		}
 		current = current->next;
 		i++;
 	}
