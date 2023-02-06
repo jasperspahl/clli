@@ -76,7 +76,7 @@ base screen with selection options
     - [ ] Inset @ position
 - [x] Datensatz löschen
 - [x] Anzeigen der Linkedlist Pointer
-- [ ] Suche nach Datensatz
+- [x] Suche nach Datensatz
     - [x] stringcompare selbst schreiben
         - [ ] unittests
     - [x] Daten sortieren
@@ -108,17 +108,6 @@ base screen with selection options
     - maybe use [charmbracelet/glamour: Render markdown with style](https://github.com/charmbracelet/glamour) since it
       is also used by cli/cli
 - [ ] Add the posibility to highlight hex numbers in hex mode
-
-### Search Alg Ideas
-
-```c
-void fn_search(linked_list *list, char *query_str) {
-	// loop over list
-        // calculate score
-    // sort score list
-    // return list of sorted score node tuples
-}
-```
 
 ## Q&A
 

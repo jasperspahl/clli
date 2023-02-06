@@ -453,7 +453,9 @@ void start_search_flow(struct Model *model) {
 			wmove(model->search_text_window, 1, 3 + (term_length > search_bar_width ? search_bar_width : term_length));
 		}
 	}
-	model->current = selected;
+	if (ch != 'q') { // prevent change of model->current if search is canceled
+		model->current = selected;
+	}
 	curs_set(0);
 	noecho();
 }
