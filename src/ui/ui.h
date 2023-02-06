@@ -12,12 +12,10 @@ enum View {
 	ADD,
 	EDIT,
 	DELETE,
-	SEARCH,
-	SORT,
 	QUIT
 };
 
-extern const char *view_names[9];
+extern const char *view_names[7];
 
 struct Model {
 	linked_list *list;
@@ -25,18 +23,25 @@ struct Model {
 
 	enum View view;
 	enum View previous_view;
-	WINDOW *overview_window;
-	WINDOW *detail_window;
-	WINDOW *detail_text_window;
-	WINDOW *detail_text_pad;
-	WINDOW *help_window;
-	WINDOW *help_text_window;
-	WINDOW *add_window;
-	WINDOW *add_text_window;
-	WINDOW *popup_window;
 	WINDOW *statusbar;
 
-	char *search_term;
+	WINDOW *overview_window;
+	WINDOW *detail_window;
+
+	WINDOW *detail_text_window;
+	WINDOW *detail_text_pad;
+
+	WINDOW *help_window;
+	WINDOW *help_text_window;
+
+	WINDOW *add_window;
+	WINDOW *add_text_window;
+
+	WINDOW *search_window;
+	WINDOW *search_text_window;
+
+	WINDOW *popup_window;
+
 	char *input_file;
 	size_t help_page;
 	int detail_pos;
@@ -54,6 +59,15 @@ void init_windows(struct Model *model);
 void draw_screen(struct Model *model);
 
 void draw_border(WINDOW *window, char *title);
+/**
+ * Draw as box
+ * @param window to draw the box to
+ * @param y pos of the top right border
+ * @param x pos of the top right border
+ * @param height of the box
+ * @param width of the box
+ */
+void draw_box(WINDOW *window, int y , int x, int height, int width);
 
 void draw_overview(struct Model *model);
 

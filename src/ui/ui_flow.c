@@ -5,6 +5,7 @@
 #include "utils/files.h"
 #include "data/file_parsing.h"
 #include "data/data_compare.h"
+#include "data/search.h"
 
 #include <stdlib.h>
 #include <ncurses.h>
@@ -335,4 +336,68 @@ void start_sort_flow(struct Model *model) {
 	}
 
 	sort_list(model->list, get_sort_fn(sb, so));
+}
+
+void start_search_flow(struct Model *model) {
+	wclear(model->search_window);
+	draw_border(model->search_window, "Search");
+	mvwaddch(model->search_window, 4, 0, ACS_SSSB); // add ascii line char with ends on top, right, bottom
+	mvwaddch(model->search_window, 4, getmaxx(model->search_window)-1, ACS_SBSS);
+	mvwhline(model->search_text_window, 3, 0, ACS_HLINE, getmaxx(model->search_text_window));
+	draw_box(model->search_text_window, 0, 1, 3, getmaxx(model->search_text_window)-2);
+
+	wrefresh(model->search_window);
+	wmove(model->search_text_window, 1, 3);
+	curs_set(2);
+
+	int ch;
+	int term_length = 0;
+	char * search_term = NULL;
+	search_res res;
+	bool is_typing = true;
+	node * selected = NULL;
+	int selected_index = 0;
+	while ((ch = wgetch(model->search_text_window)) != '\n') {
+		if (is_typing) {
+			if (ch == '\t') {
+				is_typing = false;
+				continue;
+			}
+			if (ch == KEY_BACKSPACE || ch == 127) {
+				if (term_length > 0) {
+					search_term = realloc(search_term, term_length--);
+					search_term[term_length] = '\0';
+					mvwprintw(model->search_text_window, 1, 3 + term_length, " ");
+					wmove(model->search_text_window, 1, 3 + term_length);
+				}
+			} else if (ch >= 32 && ch <= 126) {
+				search_term = realloc(search_term, ++term_length + 1);
+				search_term[term_length] = '\0';
+				search_term[term_length - 1] = (char) ch;
+				// TODO: check if search term is to long for the box and draw accordingly
+				mvwprintw(model->search_text_window, 1, 3, "%s", search_term);
+			} else {
+				continue; // don't search again and also no redraw
+			}
+			res = search(model->list, search_term, search_score_fn);
+			sort_search_res(&res);
+			selected_index = 0;
+			selected = res.searchResults[selected_index].node;
+		} else {
+			if (ch == '\t') {
+				is_typing = true;
+			} else if (ch == 'j' || ch == KEY_DOWN) {
+				selected_index++;
+			} else if (ch == 'k' || ch == KEY_UP) {
+				selected_index--;
+			} else {
+				continue; // no redraw needed
+			}
+			selected = res.searchResults[selected_index%res.size].node;
+		}
+		// TODO: Implement redraw
+	}
+	model->current = selected;
+	curs_set(0);
+	noecho();
 }

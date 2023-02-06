@@ -32,6 +32,15 @@ ________________________________________________________________________________
 |  q: Cancel
 | 
 -----------------------------------------------------------------------------------
+
+ 0 --Search---------------------------------------------------------------------------
+ 1 |  -----------------------------------------------------------------------------
+ 2 |  | Some Value|
+ 3 |  -----------------------------------------------------------------------------
+ 4 |-----------------------------------------------------------------------------------
+ 5 |    Cli/Cli
+ 6 |    jasperspahl/dwm
+ 7 |    ...
 ```
 
 ## File parsing
@@ -99,6 +108,17 @@ base screen with selection options
     - maybe use [charmbracelet/glamour: Render markdown with style](https://github.com/charmbracelet/glamour) since it
       is also used by cli/cli
 - [ ] Add the posibility to highlight hex numbers in hex mode
+
+### Search Alg Ideas
+
+```c
+void fn_search(linked_list *list, char *query_str) {
+	// loop over list
+        // calculate score
+    // sort score list
+    // return list of sorted score node tuples
+}
+```
 
 ## Q&A
 

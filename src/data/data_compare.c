@@ -1,7 +1,3 @@
-//
-// Created by jasper on 04.02.23.
-//
-
 #include "data_compare.h"
 #include "data.h"
 #include "utils/string_utils.h"
@@ -71,4 +67,8 @@ int compare_issues_desc(const void *a, const void *b) {
 	opensource_project *proj_a = (opensource_project *) a;
 	opensource_project *proj_b = (opensource_project *) b;
 	return (int) proj_b->issues - (int) proj_a->issues;
+}
+
+int search_score_fn(void *data, char *search_term) {
+	return 0;
 }

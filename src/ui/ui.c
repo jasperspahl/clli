@@ -13,15 +13,13 @@
 #define DOUBLE_BORDER_WIDTH 2
 #define MAX_UI_TEXT_LINES 10000
 
-const char *view_names[9] = {
+const char *view_names[7] = {
 		"  List",
 		"Detail",
 		"  Help",
 		"   Add",
 		"  Edit",
 		"Delete",
-		"Search",
-		"  Sort",
 		"  Quit"
 };
 
@@ -62,6 +60,11 @@ void init_windows(struct Model *model) {
 	                                getmaxy(model->add_window) - DOUBLE_BORDER_WIDTH, // height
 	                                getmaxx(model->add_window) - DOUBLE_BORDER_WIDTH, // width
 	                                1, 1);
+	model->search_window = newwin(max_y/2, max_x * 2 / 3, max_y / 4, max_x /6 );
+	model->search_text_window = derwin(model->search_window,
+								  getmaxy(model->search_window) - DOUBLE_BORDER_WIDTH, // height
+	                              getmaxx(model->search_window) - DOUBLE_BORDER_WIDTH, // width
+	                              1, 1);
 	model->popup_window = newwin(8, max_x * 2 / 3, (max_y * 2 / 3) - 4, max_x / 6);
 }
 
@@ -87,22 +90,6 @@ void draw_screen(struct Model *model) {
 		draw_help(model);
 	}
 	doupdate();
-
-	// things that need to be drawn after do update
-
-	switch (model->view) {
-		case SEARCH:
-			// TODO: Implement search view
-			// IDEA: floating window with fzf like search
-			// draw_search(model);
-			break;
-		case SORT:
-			// TODO: Implement sort view
-			// draw_sort(model);
-			break;
-		default:
-			break;
-	}
 }
 
 void draw_border(WINDOW *window, char *title) {
@@ -509,4 +496,15 @@ void draw_hex(struct Model *model) { // UP_HEX
 		current = current->next;
 		i++;
 	}
+}
+
+void draw_box(WINDOW *window, int y, int x, int height, int width) {
+	mvwhline(window, y, x, ACS_HLINE, width);
+	mvwhline(window, y+height-1, x, ACS_HLINE, width);
+	mvwvline(window, y, x, ACS_VLINE, height);
+	mvwvline(window, y, x+width-1, ACS_VLINE, height);
+	mvwaddch(window, y, x, ACS_BSSB);
+	mvwaddch(window, y+height-1, x, ACS_SSBB);
+	mvwaddch(window, y, x+width-1, ACS_BBSS);
+	mvwaddch(window, y+height-1, x+width-1, ACS_SBBS);
 }

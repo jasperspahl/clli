@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
 	draw_screen(&model);
 
 	// Main loop
-	int ch;
+	int ch; // getch form ncurses returns an int instant of a char
 	// F10 always quits (like htop)
 	bool already_handled = false;
 	while (model.view != QUIT && (ch = getch()) != KEY_F(10)) {
@@ -76,9 +76,7 @@ int main(int argc, char **argv) {
 					model.view = HELP;
 					break;
 				case '/':
-					model.previous_view = model.view;
-					// TODO: Implement search
-					model.view = SEARCH;
+					start_search_flow(&model);
 					break;
 				case 'q':
 					model.view = QUIT;
@@ -115,8 +113,6 @@ int main(int argc, char **argv) {
 		refresh();
 		draw_screen(&model);
 	}
-
-
 
 	// Cleanup
 	keypad(stdscr, false);

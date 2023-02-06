@@ -36,4 +36,6 @@ int compare_issues_asc(const void *a, const void *b);
 
 int compare_issues_desc(const void *a, const void *b);
 
+int search_score_fn(void *data, char *search_term);
+
 #endif //PROJEKT_DATA_COMPARE_H
