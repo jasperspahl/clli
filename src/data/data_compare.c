@@ -70,5 +70,22 @@ int compare_issues_desc(const void *a, const void *b) {
 }
 
 int search_score_fn(void *data, char *search_term) {
-	return 0;
+	opensource_project *osp = (opensource_project *) data;
+	int score = 0;
+	if (osp->name != NULL) {
+		if(find_first_string_like(osp->name, search_term) >= 0) {
+			score += 10;
+		}
+	}
+	if (osp->url != NULL) {
+		if(find_first_string_like(osp->url, search_term) >= 0) {
+			score += 5;
+		}
+	}
+	if (osp->description != NULL) {
+		if(find_first_string_like(osp->description, search_term) >= 0) {
+			score += 1;
+		}
+	}
+	return score;
 }

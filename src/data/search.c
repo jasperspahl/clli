@@ -9,14 +9,16 @@
 
 search_res search(linked_list *list, char *search_term, search_score_calculator calculator) {
 	search_res result = {0};
-	result.searchResults = malloc(sizeof(search_res_entry) * list->size);
+	result.searchResults = NULL;
 	node* current = list->head;
 	while (current != NULL) {
-		result.searchResults[result.size].search_score = calculator(current->value, search_term);
-		result.searchResults[result.size].node = current;
+		int search_score = calculator(current->value, search_term);
+		if (search_score > 0) {
+			result.searchResults = realloc(result.searchResults, ++result.size * sizeof(search_res_entry));
+			result.searchResults[result.size-1].search_score = search_score;
+			result.searchResults[result.size-1].node = current;
+		}
 		current = current->next;
-		if (result.searchResults[result.size].search_score >= 0)
-			result.size++;
 	}
 	return result;
 }
@@ -28,6 +30,6 @@ int compare_search_res_entry(const void *a, const void *b) {
 }
 
 void sort_search_res(search_res *res) {
-	// TODO: implement a better sorting algorithm
+	// TODO: implement a better sorting algorithm (maybe diy quicksort)
 	qsort(res->searchResults, res->size, sizeof(search_res_entry), compare_search_res_entry);
 }

@@ -77,6 +77,8 @@ void draw_hex(struct Model *model);
 
 void draw_help(struct Model *model);
 
+void clear_rect(WINDOW *window, int y, int x, int height, int width);
+
 void select_next(struct Model *model);
 
 void select_previous(struct Model *model);

@@ -6,6 +6,7 @@
 #include "data/file_parsing.h"
 #include "data/data_compare.h"
 #include "data/search.h"
+#include "utils/string_utils.h"
 
 #include <stdlib.h>
 #include <ncurses.h>
@@ -170,7 +171,7 @@ void start_add_manual_flow(struct Model *model) {
 }
 
 void start_add_github_flow(struct Model *model) {
-	// TODO: Implement
+	// TODO: Implement add form github flow (starts, issues)
 	model->view = model->previous_view;
 }
 
@@ -350,9 +351,12 @@ void start_search_flow(struct Model *model) {
 	wmove(model->search_text_window, 1, 3);
 	curs_set(2);
 
+	const int search_bar_width = getmaxx(model->search_text_window) - 6;
+
 	int ch;
 	int term_length = 0;
-	char * search_term = NULL;
+	char * search_term = malloc(1);
+	search_term[0]='\0';
 	search_res res;
 	bool is_typing = true;
 	node * selected = NULL;
@@ -361,41 +365,93 @@ void start_search_flow(struct Model *model) {
 		if (is_typing) {
 			if (ch == '\t') {
 				is_typing = false;
-				continue;
-			}
-			if (ch == KEY_BACKSPACE || ch == 127) {
+				curs_set(0);
+			} else if (ch == KEY_BACKSPACE || ch == 127) {
 				if (term_length > 0) {
 					search_term = realloc(search_term, term_length--);
 					search_term[term_length] = '\0';
-					mvwprintw(model->search_text_window, 1, 3 + term_length, " ");
-					wmove(model->search_text_window, 1, 3 + term_length);
+					if (term_length > search_bar_width) {
+						mvwprintw(model->search_text_window, 1, 3 + search_bar_width, " ");
+					} else if (term_length == search_bar_width) {
+						mvwprintw(model->search_text_window, 1, 2, " %s", search_term);
+					} else
+					{
+						mvwprintw(model->search_text_window, 1, 3 + term_length, " ");
+					}
 				}
 			} else if (ch >= 32 && ch <= 126) {
 				search_term = realloc(search_term, ++term_length + 1);
 				search_term[term_length] = '\0';
 				search_term[term_length - 1] = (char) ch;
-				// TODO: check if search term is to long for the box and draw accordingly
-				mvwprintw(model->search_text_window, 1, 3, "%s", search_term);
+				if (term_length > search_bar_width) {
+					mvwprintw(model->search_text_window, 1, 2, "%s", &search_term[term_length-search_bar_width]);
+				} else {
+					mvwprintw(model->search_text_window, 1, 3, "%s", search_term);
+				}
 			} else {
 				continue; // don't search again and also no redraw
 			}
 			res = search(model->list, search_term, search_score_fn);
 			sort_search_res(&res);
 			selected_index = 0;
-			selected = res.searchResults[selected_index].node;
+			if (res.size > 0) {
+				selected = res.searchResults[selected_index].node;
+			}
 		} else {
 			if (ch == '\t') {
 				is_typing = true;
+				curs_set(2);
 			} else if (ch == 'j' || ch == KEY_DOWN) {
-				selected_index++;
+				if (selected_index < (int)res.size-1) selected_index++;
 			} else if (ch == 'k' || ch == KEY_UP) {
-				selected_index--;
+				if (selected_index > 0 ) selected_index--;
+			} else if (ch == 'q') {
+				break; // cancel search
 			} else {
 				continue; // no redraw needed
 			}
-			selected = res.searchResults[selected_index%res.size].node;
+			if (res.size > 0) {
+				selected = res.searchResults[selected_index].node;
+			}
 		}
-		// TODO: Implement redraw
+
+		int max_lines = getmaxy(model->search_text_window) - 4; // (the search bar on top needs 4 lines
+		clear_rect(model->search_text_window, 4, 0,
+				   max_lines, getmaxx(model->search_text_window));
+
+		mvwprintw(model->search_text_window, 4, 2, "No results found!"); // this will be overwritten if res are found
+
+		int offset = selected_index - max_lines + 1;
+		if (offset < 0) offset = 0;
+		int match_in_name_at;
+		for (int i = offset; i < (int)res.size && i < max_lines+offset; i++) {
+			opensource_project * osp = (opensource_project *) res.searchResults[i].node->value;
+
+			match_in_name_at = find_first_string_like(osp->name, search_term);
+			if(!is_typing && i == selected_index) {
+				wattron(model->search_text_window, A_REVERSE);
+			}
+			mvwhline(model->search_text_window, 4+i-offset, 0, ' ', getmaxx(model->search_text_window));
+			if (match_in_name_at >= 0) {
+				// highlight the search_term in name if found
+				mvwprintw(model->search_text_window, 4+i-offset, 2, "%.*s",match_in_name_at, osp->name);
+				wattron(model->search_text_window, A_BOLD);
+				mvwprintw(model->search_text_window, 4+i-offset, 2+match_in_name_at,
+						  "%.*s", term_length, osp->name + match_in_name_at);
+				wattroff(model->search_text_window, A_BOLD);
+				mvwprintw(model->search_text_window, 4+i-offset, 2+match_in_name_at+term_length,
+				          "%s",osp->name + match_in_name_at + term_length);
+			} else{
+				mvwprintw(model->search_text_window, 4+i-offset, 2, "%s", osp->name);
+			}
+			if(!is_typing && i == selected_index) {
+				wattroff(model->search_text_window, A_REVERSE);
+			}
+		}
+		// reset the cursor to the search bar if typing
+		if (is_typing) {
+			wmove(model->search_text_window, 1, 3 + (term_length > search_bar_width ? search_bar_width : term_length));
+		}
 	}
 	model->current = selected;
 	curs_set(0);

@@ -27,7 +27,7 @@ int find_first_string_like(const char *src, const char *to_find) {
 	size_t fl = string_length(to_find);
 	size_t sl = string_length(src);
 	for (i = 0; sl - i >= fl; i++) {
-		if (string_equals(src + i, to_find)) return i;
+		if (string_in(src + i, to_find)) return i;
 	}
 	return -1;
 }
@@ -52,7 +52,7 @@ int stringcompare(const char *a, const char *b) {
 }
 
 bool string_equals(const char *a, const char *b) {
-	while (*a != '\0' || *b != '\0') {
+	while (*a != '\0' && *b != '\0') {
 		if (*a != *b) {
 			return false;
 		}
@@ -60,4 +60,16 @@ bool string_equals(const char *a, const char *b) {
 		b++;
 	}
 	return (*a == '\0' && *b == '\0');
+}
+
+
+bool string_in(const char *a, const char *b) {
+	while (*a != '\0' && *b != '\0') {
+		if (*a != *b) {
+			return false;
+		}
+		a++;
+		b++;
+	}
+	return (*b == '\0');
 }

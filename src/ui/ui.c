@@ -508,3 +508,9 @@ void draw_box(WINDOW *window, int y, int x, int height, int width) {
 	mvwaddch(window, y, x+width-1, ACS_BBSS);
 	mvwaddch(window, y+height-1, x+width-1, ACS_SBBS);
 }
+
+void clear_rect(WINDOW *window, int y, int x, int height, int width) {
+	for(int i = 0; i < height; i++) {
+		mvwhline(window, y + i , x, ' ', width);
+	}
+}

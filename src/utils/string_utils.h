@@ -39,5 +39,10 @@ int stringcompare(const char *a, const char *b);
  * @retruns false if a and b are not equal.
  */
 bool string_equals(const char *a, const char *b);
+/**
+ * Compares to strings
+ * @return true if one is at the start of the other
+ */
+bool string_in(const char *a, const char *b);
 
 #endif //PROJEKT_STRING_UTILS_H
