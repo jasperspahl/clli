@@ -456,6 +456,8 @@ void start_search_flow(struct Model *model) {
 	if (ch != 'q') { // prevent change of model->current if search is canceled
 		model->current = selected;
 	}
+	free(res.searchResults);
+	free(search_term);
 	curs_set(0);
 	noecho();
 }
