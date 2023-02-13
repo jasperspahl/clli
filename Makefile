@@ -63,8 +63,12 @@ $(PROJ_NAME)_tests: build/tests.o build/linked_list.o build/test_utils.o build/l
 fetch_readme: build/fetch_readme_test.o build/fetch_readme.o
 	$(CC) $(CFLAGS) $(LIBS) -o $@ $^
 
+printout.pdf: printout.tex
+	xelatex -shell-escape printout.tex
+	xelatex -shell-escape printout.tex
+
 .PHONY: docs
-docs:
+docs: printout.pdf
 	doxygen Doxyfile
 	cd docs/latex && make
 

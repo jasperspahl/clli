@@ -138,3 +138,22 @@ output.bin
 fetch_readme
 
 docs
+_minted-*
+*.aux
+*.bbl
+*.blg
+*.dvi
+*.fdb_latexmk
+*.fls
+*.idx
+*.ilg
+*.ind
+*.ist
+*.lof
+*.log
+*.lot
+*.maf
+*.mtc
+*.toc
+*.synctex.gz
+

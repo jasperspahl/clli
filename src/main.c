@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
 
 	// Initialize ncurses
 	init_ncurses();
-	init_colors();
+	//init_colors();
 
 	init_windows(&model);
 	refresh();
@@ -72,20 +72,23 @@ int main(int argc, char **argv) {
 		if (!already_handled) {
 			switch (ch) {
 				case '?':
-					model.previous_view = model.view;
-					model.view = HELP;
+					if (model.view != HELP) {
+						model.previous_view = model.view;
+						model.view = HELP;
+					} else {
+						model.view = model.previous_view; // quit help view
+					}
 					break;
 				case '/':
 					start_search_flow(&model);
 					break;
 				case 'q':
 					model.view = QUIT;
-					break;
+					continue;
 				case 'i':
 					model.previous_view = model.view;
 					model.view = EDIT;
 					break;
-				case 'a':
 				case 'n':
 					model.previous_view = model.view;
 					model.view = ADD;

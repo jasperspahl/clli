@@ -1,0 +1,160 @@
+\documentclass[a4paper, ngerman, 11pt]{scrartcl}
+% shell-escape xelatex
+\usepackage{fontspec}
+\usepackage{amsfonts, amsmath, amssymb}
+\usepackage{fancyhdr}
+\usepackage{babel}
+\usepackage{minted}
+\usepackage{mathptmx}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage[left=1cm, right=1cm, top=2cm, bottom=2cm]{geometry}
+
+\newcommand{\inputc}[1]{
+	\inputminted[
+		frame=lines,
+		framesep=2mm,
+		baselinestretch=1.1,
+		fontsize=\small,
+		linenos,
+		tabsize=4,
+		breaklines
+	]{c}{#1}
+}
+
+\pagestyle{fancy}
+\fancyhead{}
+\fancyfoot{}
+\fancyhead[L]{\slshape \leftmark}
+\fancyhead[C]{\thepage}
+\fancyhead[R]{\slshape \rightmark}
+
+\setmainfont{URW Bookman}
+
+\author{Jasper Levin Spahl}
+
+\begin{document}
+\begin{titlepage}
+\begin{center}
+\vspace*{1cm}
+
+\Large{\textbf{Programmieren}}\\
+\Large{\textbf{Projekt Quelltext}}\\
+\vfill
+\line(1,0){400}\\[1mm]
+\huge{\textbf{clli}}\\[3mm]
+\large{C Linked List Interactor}\\[3mm]
+\line(1,0){400}\\
+\vfill
+Jasper Levin Spahl\\
+TINF22\_M2869404\\
+\today\\
+\end{center}
+\end{titlepage}
+
+\tableofcontents
+
+\clearpage
+
+\section{main.c}
+\inputc{src/main.c}
+\clearpage
+
+\section{tests.c}
+\inputc{src/tests.c}
+\clearpage
+
+\section{fetch\_readme.c}
+\inputc{src/fetch_readme_test.c}
+\clearpage
+
+\section{data}
+\subsection{data.h}
+\inputc{src/data/data.h}
+
+\subsection{data.c}
+\inputc{src/data/data.c}
+\clearpage
+
+\subsection{data\_compare.h}
+\inputc{src/data/data_compare.h}
+
+\subsection{data\_compare.c}
+\inputc{src/data/data_compare.c}
+\clearpage
+
+\subsection{file\_parsing.h}
+\inputc{src/data/file_parsing.h}
+
+\subsection{file\_parsing.c}
+\inputc{src/data/file_parsing.c}
+\clearpage
+
+\subsection{linked\_list.h}
+\inputc{src/data/linked_list.h}
+
+\subsection{linked\_list.c}
+\inputc{src/data/linked_list.c}
+\clearpage
+
+\subsection{search.h}
+\inputc{src/data/search.h}
+
+\subsection{search.c}
+\inputc{src/data/search.c}
+\clearpage
+
+\section{tests}
+\subsection{linkedlist\_tests.h}
+\inputc{src/tests/linkedlist_tests.h}
+\subsection{linkedlist\_tests.c}
+\inputc{src/tests/linkedlist_tests.c}
+\clearpage
+\subsection{string\_function\_tests.h}
+\inputc{src/tests/string_function_tests.h}
+\subsection{string\_function\_tests.c}
+\inputc{src/tests/string_function_tests.c}
+\clearpage
+
+\section{ui}
+\subsection{ui.h}
+\inputc{src/ui/ui.h}
+\subsection{ui.c}
+\inputc{src/ui/ui.c}
+\clearpage
+\subsection{ui\_flow.h}
+\inputc{src/ui/ui_flow.h}
+\subsection{ui\_flow.c}
+\inputc{src/ui/ui_flow.c}
+\clearpage
+\section{utils}
+\subsection{editor\_utils.h}
+\inputc{src/utils/editor_utils.h}
+\subsection{editor\_utils.c}
+\inputc{src/utils/editor_utils.c}
+\clearpage
+
+\subsection{fetch\_readme.h}
+\inputc{src/utils/fetch_readme.h}
+\subsection{fetch\_readme.c}
+\inputc{src/utils/fetch_readme.c}
+\clearpage
+
+\subsection{files.h}
+\inputc{src/utils/files.h}
+\subsection{files.c}
+\inputc{src/utils/files.c}
+\clearpage
+
+\subsection{string\_utils.h}
+\inputc{src/utils/string_utils.h}
+\subsection{string\_utils.c}
+\inputc{src/utils/string_utils.c}
+\clearpage
+
+\subsection{test\_utils.h}
+\inputc{src/utils/test_utils.h}
+\subsection{test\_utils.c}
+\inputc{src/utils/test_utils.c}
+\clearpage
+
+\end{document}

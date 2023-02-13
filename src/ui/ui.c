@@ -34,7 +34,9 @@ void init_ncurses(void) {
 }
 
 void init_colors(void) {
-
+	init_pair(1, COLOR_WHITE, COLOR_BLACK);
+	init_pair(2, COLOR_GREEN, COLOR_BLACK);
+	init_pair(3, COLOR_MAGENTA, COLOR_BLACK);
 }
 
 void init_windows(struct Model *model) {
@@ -478,17 +480,24 @@ bool handle_help_input(struct Model *model, int ch) {
 void draw_hex(struct Model *model) { // UP_HEX
 	node *current = model->list->head;
 	int i = 0;
+	bool highlight = false;
 	while (current != NULL) {
 		if (current == model->current) {
 			wattron(model->detail_text_pad, A_REVERSE);
 			mvwhline(model->detail_text_pad, i, 0, ' ', getmaxx(model->detail_text_pad));
 		}
-		mvwprintw(model->detail_text_pad, i, 0,
-		          "%3d: %p 👆: %14p 👇: %14p",
-		          i,
-		          (void *) current,
-		          (void *) current->previous,
-		          (void *) current->next);
+		mvwprintw(model->detail_text_pad, i, 0, "%3d: %p ", i, (void *) current);
+
+		highlight = current->previous == model->current;
+		if (highlight) wattron(model->detail_text_pad, A_BOLD);
+		wprintw(model->detail_text_pad, "👆: %14p ", (void *) current->previous);
+		if (highlight) wattroff(model->detail_text_pad, A_BOLD);
+
+		highlight = current->next == model->current;
+		if (highlight) wattron(model->detail_text_pad, A_BOLD);
+		wprintw(model->detail_text_pad, "👇: %14p ", (void *) current->next);
+		if (highlight) wattroff(model->detail_text_pad, A_BOLD);
+
 		if (current == model->current) {
 			wattroff(model->detail_text_pad, A_REVERSE);
 		}

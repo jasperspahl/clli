@@ -87,7 +87,7 @@ base screen with selection options
 
 ### Extra
 
-
+- [ ] Command mode
 - [ ] Add the posibility to highlight hex numbers in hex mode
 - [ ] Datensatz an beliebiger position hinzufügen
 - [x] Einfügen von mehreren Datensätzen
@@ -97,7 +97,10 @@ base screen with selection options
     - [ ] ~~UI Flow for adding multiple entries manually~~
 - [ ] Löschen von mehreren Datensätzen
 - [ ] Copy Datensatz into edit_flow
-- [x] Sortierung Mergesort
+- [ ] Cursor on Detail page
+    - [ ] automatically move the display rect of the `model->detail_text_pad`
+    - [ ] enable vim style `i`/ `a` (open vim in insert mode on current position)
+- [x] Mergesort
 - [ ] ~~Speichern mit Verschlüsselung~~
 - [ ] Entfernen doppelter Datensätze
     - [ ] Datensatz Hash compare on that delete on match
@@ -109,18 +112,3 @@ base screen with selection options
     - see [cli/cli: GitHub’s official command line tool](https://github.com/cli/cli)
     - maybe use [charmbracelet/glamour: Render markdown with style](https://github.com/charmbracelet/glamour) since it
       is also used by cli/cli
-
-## Q&A
-
-Wie geh ich mit const arrays um die für enum to string brauche?
-
-```c
-enum Test {
-    ABC,
-    DEF,
-}
-const char * nameOfTest[] = {
-    "ABC",
-    "DEF"
-};
-```
