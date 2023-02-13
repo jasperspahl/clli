@@ -87,4 +87,5 @@ test: $(PROJ_NAME)_tests
 
 .PHONY: clean
 clean:
+	rm -rf _minted-printout *.aux *.out *.toc *.pdf *.log
 	rm -f build/*.o $(PROJ_NAME) $(PROJ_NAME)_tests
