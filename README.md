@@ -73,12 +73,10 @@ base screen with selection options
     - [x] Datei per UI einlesen
 - [x] Parsen der Datei
 - [x] Datensatz hinzufügen
-    - [ ] Inset @ position
 - [x] Datensatz löschen
 - [x] Anzeigen der Linkedlist Pointer
 - [x] Suche nach Datensatz
     - [x] stringcompare selbst schreiben
-        - [ ] unittests
     - [x] Daten sortieren
         - [x] Sortierfunktion Linkliste
             - [x] Unit Tests
@@ -89,6 +87,9 @@ base screen with selection options
 
 ### Extra
 
+
+- [ ] Add the posibility to highlight hex numbers in hex mode
+- [ ] Datensatz an beliebiger position hinzufügen
 - [x] Einfügen von mehreren Datensätzen
     - [x] Von Datei
     - [ ] Einlesen von txt files mit comments
@@ -96,9 +97,10 @@ base screen with selection options
     - [ ] ~~UI Flow for adding multiple entries manually~~
 - [ ] Löschen von mehreren Datensätzen
 - [ ] Copy Datensatz into edit_flow
-- [ ] Sortierung Quicksort
-- [ ] Speichern mit Verschlüsselung
+- [x] Sortierung Mergesort
+- [ ] ~~Speichern mit Verschlüsselung~~
 - [ ] Entfernen doppelter Datensätze
+    - [ ] Datensatz Hash compare on that delete on match
 - [ ] get all data form github api
     - [x] get readme
     - [ ] get stars
@@ -107,7 +109,6 @@ base screen with selection options
     - see [cli/cli: GitHub’s official command line tool](https://github.com/cli/cli)
     - maybe use [charmbracelet/glamour: Render markdown with style](https://github.com/charmbracelet/glamour) since it
       is also used by cli/cli
-- [ ] Add the posibility to highlight hex numbers in hex mode
 
 ## Q&A
 

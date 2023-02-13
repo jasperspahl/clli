@@ -172,6 +172,12 @@ void start_add_manual_flow(struct Model *model) {
 
 void start_add_github_flow(struct Model *model) {
 	// TODO: Implement add form github flow (starts, issues)
+	wclear(model->popup_window);
+	draw_border(model->popup_window, "Add from Github");
+	wattron(model->popup_window, A_BOLD);
+	mvwprintw(model->popup_window, 2, 2, "DISCLAIMER: This feature is not yet implemented");
+	wattroff(model->popup_window, A_BOLD);
+	wgetch(model->popup_window);
 	model->view = model->previous_view;
 }
 
@@ -335,8 +341,29 @@ void start_sort_flow(struct Model *model) {
 	if (!selected) {
 		return;// user cancelled
 	}
+	wclear(model->popup_window);
 
-	sort_list(model->list, get_sort_fn(sb, so));
+	draw_border(model->popup_window, "Sorting with");
+	mvwprintw(model->popup_window, 2, 4, "b: Bubble Sort");
+	mvwprintw(model->popup_window, 3, 4, "m: Merge Sort (default)");
+	mvwprintw(model->popup_window, 6, 4, "q: cancel");
+	selected = false;
+	while (!selected && (ch = wgetch(model->popup_window)) != 'q') {
+		switch (ch) {
+			case 'b':
+				selected = true;
+				sort_list_bubble(model->list, get_sort_fn(sb, so));
+				break;
+			case 'm':
+			case '\n':
+				selected = true;
+				sort_list(model->list, get_sort_fn(sb, so));
+				break;
+			default:
+				break;
+		}
+	}
+	model->current = model->list->head;
 }
 
 void start_search_flow(struct Model *model) {

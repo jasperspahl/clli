@@ -193,7 +193,6 @@ void draw_help(struct Model *model) {
 			"l: Move right",
 			"h: Move left",
 			"n: New entry",
-			"e: Edit entry",
 			"d: Delete entry",
 			"o: Open/Append from File",
 			"w: Write file",

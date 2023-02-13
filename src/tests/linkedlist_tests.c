@@ -306,6 +306,24 @@ void test_ll_sort_list_pseudo_random(void) {
 	}
 }
 
+void test_ll_merge_sorted(void) {
+	// arrange
+	int values1[5] = {1, 3, 5, 7, 9};
+	int values2[5] = {2, 4, 6, 8, 10};
+	int expect[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+	linked_list *list1 = create_int_list(values1, 5);
+	linked_list *list2 = create_int_list(values2, 5);
+	// act
+	linked_list *merged = merge_lists_sorted(list1, list2, compare_ints);
+	// assert
+	node *current = merged->head;
+	for (int i = 0; i < 10; i++) {
+		assert(*(int *) current->value == expect[i]);
+		current = current->next;
+	}
+}
+
+
 void linked_list_tests(void) {
 	TEST(test_ll_create);
 	TEST(test_ll_add);
@@ -322,4 +340,5 @@ void linked_list_tests(void) {
 	TEST(test_ll_sort_list_bubble__empty_list);
 	TEST(test_ll_sort_list_bubble__one_item);
 	TEST(test_ll_sort_list_pseudo_random);
+	TEST(test_ll_merge_sorted);
 }

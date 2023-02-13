@@ -101,8 +101,27 @@ void *remove_node_at(linked_list *list, int index) {
 }
 
 void sort_list(linked_list *list, int (*compare)(const void *, const void *)) {
-	// TODO: implement quicksort
-	sort_list_bubble(list, compare);
+	size_t size = list->size;
+	if (size <= 1) {
+		return;
+	}
+	// split list in two
+	linked_list *left = create_linked_list(list->free_value_fn);
+	linked_list *right = create_linked_list(list->free_value_fn);
+	node *current = list->head;
+	for (size_t i = 0; i < size / 2; i++) {
+		add_node(left, current->value);
+		current = current->next;
+	}
+	for (size_t i = size / 2; i < size; i++) {
+		add_node(right, current->value);
+		current = current->next;
+	}
+	// sort the two lists
+	sort_list(left, compare);
+	sort_list(right, compare);
+	// merge the two sorted lists
+	*list = *merge_lists_sorted(left, right, compare);
 }
 
 void sort_list_bubble(linked_list *list, int (*compare)(const void *, const void *)) {
@@ -217,4 +236,29 @@ linked_list *merge_lists(linked_list *list, linked_list *list2) {
 	list->size += list2->size;
 	free(list2);
 	return list;
+}
+
+linked_list *merge_lists_sorted(linked_list *list, linked_list *list2, int (*compare)(const void *, const void *)) {
+	if (list == NULL) {
+		return list2;
+	}
+	if (list2 == NULL) {
+		return list;
+	}
+	linked_list *result = create_linked_list(list->free_value_fn);
+	while (list->size > 0 || list2->size > 0) {
+		if (list->size == 0) {
+			add_node(result, remove_node_at(list2, 0));
+			continue;
+		} else if (list2->size == 0) {
+			add_node(result, remove_node_at(list, 0));
+			continue;
+		}
+		if (compare(list->head->value, list2->head->value) <= 0) {
+			add_node(result, remove_node_at(list, 0));
+		} else {
+			add_node(result, remove_node_at(list2, 0));
+		}
+	}
+	return result;
 }

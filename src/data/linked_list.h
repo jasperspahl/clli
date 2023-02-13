@@ -70,6 +70,17 @@ void free_list(linked_list *list);
 linked_list *merge_lists(linked_list *list, linked_list *list2);
 
 /**
+ * Merges two linked lists.
+ * If each input list is sorted according to the comparison function, the returned list is also sorted.
+ * This function combined will be part of a merge sort.
+ * @param list pointer to the first list
+ * @param list2
+ * @param compare a function that compares two values in the list
+ * @return a pointer to the merged list.
+ */
+linked_list *merge_lists_sorted(linked_list *list, linked_list *list2, int (*compare)(const void *, const void *));
+
+/**
  * Removes a node and frees the value of the node.
  * @param list The linked list to remove the node from.
  * @param node The note to remove.
@@ -97,7 +108,11 @@ void *remove_node(linked_list *list, node *n);
 void *remove_node_at(linked_list *list, int index);
 
 /**
- * Sorts the linked list using the quick sort algorithm.
+ * Sorts the linked list using the merge sort algorithm.
+ * Merge sort is a divide and conquer algorithm.
+ * It divides the input list into two halves, calls itself for the two halves, and then merges the two sorted halves.
+ * My implementation of merge sort more memory intensive then the bubble sort but since I'm using a small dataset this
+ * isn't a problem yet.
  * @param list The linked list to sort.
  * @param compare The compare function to use. (See `man qsort` for more information on compare function.)
  */
