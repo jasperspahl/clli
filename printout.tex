@@ -7,7 +7,7 @@
 \usepackage{minted}
 \usepackage{mathptmx}
 \usepackage[breaklinks=true]{hyperref}
-\usepackage[left=1cm, right=1cm, top=2cm, bottom=1.5cm]{geometry}
+\usepackage[left=2cm, right=1cm, top=2cm, bottom=2cm]{geometry}
 
 \newcommand{\inputc}[1]{
 	\inputminted[
@@ -55,15 +55,15 @@ TINF22\_M2869404\\
 
 \clearpage
 
-\section{main.c}
+\section{Main}
+\subsection{main.c}
 \inputc{src/main.c}
 \clearpage
 
-\section{tests.c}
+\section{Other Binarys}
+\subsection[tests.c]{tests.c (Unittest main)}
 \inputc{src/tests.c}
-\clearpage
-
-\section{fetch\_readme.c}
+\subsection[fetch\_readme.c]{fetch\_readme.c (Test for utils/fetch\_readme.c)}
 \inputc{src/fetch_readme_test.c}
 \clearpage
 

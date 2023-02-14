@@ -85,7 +85,7 @@ base screen with selection options
         - [x] Implement UI
 - [x] Daten Speichern
     - [x] On Close
-    - [ ] On Demand
+    - [x] On Demand
 
 ### Extra
 
