@@ -30,7 +30,7 @@ linked_list *read_file(const char *filename) {
 void write_file(const char *filename, linked_list *list) {
 	FILE *file = fopen(filename, "wb");
 	if (file == NULL) {
-		printf("Could not open file %s: %s\n", filename, strerror(errno));
+		fprintf(stderr, "Could not open file %s: %s\n", filename, strerror(errno));
 		exit(1);
 	}
 	node *current = list->head;

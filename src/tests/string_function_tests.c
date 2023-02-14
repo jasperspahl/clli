@@ -85,6 +85,30 @@ void test_find_first_string_like__not_found(void) {
 	assert(i == -1);
 }
 
+void test_split_string__no_delimiter_on_back(void) {
+	// arrange
+	char *str = "w test.txt";
+	// act
+	size_t items;
+	char **words = split_string(str, ' ', &items);
+	// assert
+	assert(items == 2);
+	assert(string_equals(words[0], "w"));
+	assert(string_equals(words[1], "test.txt"));
+}
+
+void test_split_string__delimiter_on_back(void) {
+	// arrange
+	char *str = "w test.txt ";
+	// act
+	size_t items;
+	char **words = split_string(str, ' ', &items);
+	// assert
+	assert(items == 2);
+	assert(string_equals(words[0], "w"));
+	assert(string_equals(words[1], "test.txt"));
+}
+
 void string_tests(void) {
 	TEST(test_string_equals__returns_true);
 	TEST(test_string_equals__returns_false);
@@ -94,4 +118,6 @@ void string_tests(void) {
 	TEST(test_find_first_char_like__not_found);
 	TEST(test_find_first_string_like__found);
 	TEST(test_find_first_string_like__not_found);
+	TEST(test_split_string__no_delimiter_on_back);
+	TEST(test_split_string__delimiter_on_back);
 }

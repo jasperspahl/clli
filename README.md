@@ -1,5 +1,7 @@
 # Ideas
 
+- Controllable like vim
+
 File parsing [png-parsing]
 
 [png-parsing]: [https://www.youtube.com/watch?v=M9ZwuIv3xz8]
@@ -87,8 +89,18 @@ base screen with selection options
 
 ### Extra
 
-- [ ] Command mode
+- [x] Command mode
+    - [x] Write a command parser
+        - [x] Write string splitter
+    - [x] Write Commands
+        - [x] Open `:o <filename>` or `:open <filename>`
+        - [x] Save `:w` or `:write`
+        - [x] Save as `:w <filename>` or `:write <filename>`
+        - [x] Save and quit `:wq`
+        - [x] Quit `:q` or `:quit`
 - [ ] Add the posibility to highlight hex numbers in hex mode
+    - [ ] Add Color to the project
+    - [x] The hex pointers to the currently selected element should be highlighted
 - [ ] Datensatz an beliebiger position hinzufügen
 - [x] Einfügen von mehreren Datensätzen
     - [x] Von Datei
@@ -109,6 +121,7 @@ base screen with selection options
     - [ ] get stars
     - [ ] get issues
 - [ ] Add Readme Parsing
+    - this will be quite difficult since ncurses doesn't support ansi escape codes
     - see [cli/cli: GitHub’s official command line tool](https://github.com/cli/cli)
     - maybe use [charmbracelet/glamour: Render markdown with style](https://github.com/charmbracelet/glamour) since it
       is also used by cli/cli

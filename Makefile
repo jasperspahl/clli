@@ -26,6 +26,8 @@ build/ui.o: src/ui/ui.c src/ui/ui.h src/data/linked_list.h src/data/data.h src/u
 	$(CC) $(CFLAGS) -c -o $@ $<
 build/ui_flow.o: src/ui/ui_flow.c src/ui/ui_flow.h src/ui/ui.h src/utils/files.h src/data/search.h
 	$(CC) $(CFLAGS) -c -o $@ $<
+build/commands.o: src/ui/commands.c src/ui/commands.h src/utils/string_utils.h src/data/file_parsing.h
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 # Data
 build/data.o: src/data/data.c src/data/data.h src/data/linked_list.h
@@ -54,7 +56,7 @@ build/fetch_readme_test.o: src/fetch_readme_test.c src/utils/fetch_readme.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 # Executables
-$(PROJ_NAME): build/main.o build/linked_list.o build/file_parsing.o build/data.o build/ui.o build/editor_utils.o build/fetch_readme.o build/ui_flow.o build/files.o build/string_utils.o build/data_compare.o build/search.o
+$(PROJ_NAME): build/main.o build/linked_list.o build/file_parsing.o build/data.o build/ui.o build/editor_utils.o build/fetch_readme.o build/ui_flow.o build/files.o build/string_utils.o build/data_compare.o build/search.o build/commands.o
 	$(CC) $(CFLAGS) $(LIBS) -o $@ $^
 
 $(PROJ_NAME)_tests: build/tests.o build/linked_list.o build/test_utils.o build/linkedlist_tests.o build/string_function_tests.o build/string_utils.o
@@ -63,7 +65,7 @@ $(PROJ_NAME)_tests: build/tests.o build/linked_list.o build/test_utils.o build/l
 fetch_readme: build/fetch_readme_test.o build/fetch_readme.o
 	$(CC) $(CFLAGS) $(LIBS) -o $@ $^
 
-printout.pdf: printout.tex
+printout.pdf: printout.tex src/*
 	xelatex -shell-escape printout.tex
 	xelatex -shell-escape printout.tex
 

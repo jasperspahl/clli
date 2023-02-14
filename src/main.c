@@ -84,7 +84,7 @@ int main(int argc, char **argv) {
 					break;
 				case 'q':
 					model.view = QUIT;
-					continue;
+					break;
 				case 'i':
 					model.previous_view = model.view;
 					model.view = EDIT;
@@ -107,10 +107,16 @@ int main(int argc, char **argv) {
 					break;
 				case 'x':
 					model.show_hex = !model.show_hex;
+					break;
+				case ':':
+					start_command_flow(&model);
 				default:
 					break;
 			}
 
+		}
+		if (model.view == QUIT) {
+			continue;
 		}
 		// Draw the screen
 		refresh();
@@ -122,8 +128,6 @@ int main(int argc, char **argv) {
 	end_ncurses();
 	if (model.input_file != NULL) {
 		write_file(model.input_file, list);
-	} else {
-		write_file("output.bin", list);
 	}
 
 	free_list(list);

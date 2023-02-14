@@ -3,6 +3,8 @@
 //
 
 #include "string_utils.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 size_t string_length(const char *string) {
 	size_t length = 0;
@@ -72,4 +74,50 @@ bool string_in(const char *a, const char *b) {
 		b++;
 	}
 	return (*b == '\0');
+}
+
+char **split_string(const char *string, char delimiter, size_t *size) {
+	char ** result;
+	char ** del_pos = malloc(1);
+	del_pos[0]=NULL;
+	char * tmp = (char *)string;
+	*size = 0;
+	while(*tmp != '\0') {
+		if (delimiter == *tmp) {
+			*size += 1;
+			del_pos = realloc(del_pos, *size + 1);
+			del_pos[*size-1]=tmp;
+			del_pos[*size] = NULL;
+		}
+		tmp++;
+	}
+	// increase size if the string doesn't end with the delimiter char
+	*size += *(string + string_length(string) - 1) != delimiter;
+
+	result = malloc(sizeof(char*) * *size); //for my info ;) (sizeof(char*) [times] [value behind]size)
+
+	tmp = (char *)string;
+	for (size_t i = 0; i < *size; i++) {
+		size_t sub_str_len;
+		if (del_pos[i] != NULL) {
+			sub_str_len = del_pos[i] - tmp;
+		} else if (i+1 == *size){
+			sub_str_len = (string + string_length(string)) - tmp;
+		} else {
+			fprintf(stderr,
+				"THIS IS NOT ALLOWED TO BE HAPPENING @ %s:%d\n"
+				"\t DEBUG_INFO: string: %s, delimiter: %c, size: %zu, i: %zu",
+				__FILE__, __LINE__, string, delimiter, *size, i);
+			exit(EXIT_FAILURE);
+		}
+		result[i] = malloc(sub_str_len +1);
+		for (size_t j = 0; j < sub_str_len; j++) {
+			result[i][j] = tmp[j];
+		}
+		result[i][sub_str_len] = '\0';
+		tmp = del_pos[i] + 1;
+	}
+	tmp = NULL;
+	free(del_pos);
+	return result;
 }

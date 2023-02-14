@@ -25,4 +25,6 @@ void start_sort_flow(struct Model *model);
 
 void start_search_flow(struct Model *model);
 
+void start_command_flow(struct Model *model);
+
 #endif //PROJEKT_UI_FLOW_H

@@ -23,13 +23,48 @@ search_res search(linked_list *list, char *search_term, search_score_calculator 
 	return result;
 }
 
-int compare_search_res_entry(const void *a, const void *b) {
-	search_res_entry *entry_a = (search_res_entry *) a;
-	search_res_entry *entry_b = (search_res_entry *) b;
-	return entry_b->search_score - entry_a->search_score;
+void sort_search_res(search_res *res) {
+	sort_search_res_r(res, 0, res->size-1);
 }
 
-void sort_search_res(search_res *res) {
-	// TODO: implement a better sorting algorithm (maybe diy quicksort)
-	qsort(res->searchResults, res->size, sizeof(search_res_entry), compare_search_res_entry);
+void sort_search_res_r(search_res *res, size_t start, size_t end) {
+	// an empty list or a list with one element is already sorted
+	if (res->size <= 1) {
+		return;
+	}
+	if (start < end) {
+		return;
+	}
+	size_t pivot;
+	sort_search_res_partition(res, start, end, &pivot);
+	sort_search_res_r(res, start, pivot-1);
+	sort_search_res_r(res, pivot+1, end);
+}
+
+void sort_search_res_swap(search_res *res, size_t a, size_t b) {
+	if (a == b || a >= res->size || b >= res->size) {
+		return;
+	}
+	search_res_entry tmp = res->searchResults[a];
+	res->searchResults[a] = res->searchResults[b];
+	res->searchResults[b] = tmp;
+}
+
+void sort_search_res_partition(search_res *res, size_t start, size_t end, size_t *pivot) {
+	size_t left = start;
+	size_t right = end;
+	*pivot = start;
+	while (left < right) {
+		while (left < end && res->searchResults[left].search_score <= res->searchResults[*pivot].search_score) {
+			left++;
+		}
+		while (res->searchResults[right].search_score > res->searchResults[*pivot].search_score) {
+			right--;
+		}
+		if (left < right) {
+			sort_search_res_swap(res, left, right);
+		}
+	}
+	sort_search_res_swap(res, *pivot, right);
+	*pivot = right;
 }

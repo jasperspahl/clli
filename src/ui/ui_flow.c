@@ -7,6 +7,7 @@
 #include "data/data_compare.h"
 #include "data/search.h"
 #include "utils/string_utils.h"
+#include "commands.h"
 
 #include <stdlib.h>
 #include <ncurses.h>
@@ -487,4 +488,18 @@ void start_search_flow(struct Model *model) {
 	free(search_term);
 	curs_set(0);
 	noecho();
+}
+
+void start_command_flow(struct Model *model) {
+	int max_x = getmaxx(model->statusbar);
+	mvwhline(model->statusbar, 1,0, ' ', max_x);
+	mvwprintw(model->statusbar, 1, 0, ":");
+	echo();
+	curs_set(2);
+	char * command_input = malloc(sizeof(char) * max_x);
+	wgetnstr(model->statusbar, command_input, max_x);
+	noecho();
+	curs_set(0);
+	handle_command(model, command_input);
+	free(command_input);
 }

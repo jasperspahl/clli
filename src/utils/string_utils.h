@@ -45,4 +45,12 @@ bool string_equals(const char *a, const char *b);
  */
 bool string_in(const char *a, const char *b);
 
+/**
+ * Split a string into an array of strings based on a delimiter.
+ * @param string The string to split.
+ * @param delimiter The delimiter to split the string on.
+ * @param size The size of the returned array.
+ * @return An array of strings.
+ */
+char **split_string(const char *string, char delimiter, size_t *size);
 #endif //PROJEKT_STRING_UTILS_H

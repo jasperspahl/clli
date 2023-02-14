@@ -76,7 +76,7 @@ void draw_screen(struct Model *model) {
 	wattron(model->statusbar, A_BOLD);
 	wattron(model->statusbar, A_REVERSE);
 	mvwhline(model->statusbar, 0, 0, ' ', getmaxx(model->statusbar));
-	mvwprintw(model->statusbar, 0, 1, "Mode: %s | Size of list: %d", view_names[model->view], model->list->size);
+	mvwprintw(model->statusbar, 0, 1, "Mode: %s | Size of list: %d | File %s", view_names[model->view], model->list->size, model->input_file);
 	wattroff(model->statusbar, A_REVERSE);
 	wattroff(model->statusbar, A_BOLD);
 	mvwprintw(model->statusbar, 1, 1, "q:Quit  n:New  s:Sort  o:Open  d:Delete  /:Search  ?:Help");
