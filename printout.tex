@@ -1,21 +1,23 @@
 \documentclass[a4paper, ngerman, 11pt]{scrartcl}
 % shell-escape xelatex
 \usepackage{fontspec}
+\usepackage{xunicode}
 \usepackage{amsfonts, amsmath, amssymb}
 \usepackage{fancyhdr}
 \usepackage{babel}
 \usepackage{minted}
-\usepackage{mathptmx}
 \usepackage[breaklinks=true]{hyperref}
-\usepackage[left=2cm, right=1cm, top=2cm, bottom=2cm]{geometry}
+\usepackage[left=3cm, right=1.25cm, top=2cm, bottom=2cm, twoside]{geometry}
 
-\usemintedstyle{algol_nu}
+%\usemintedstyle{algol_nu}
+%\usemintedstyle{bw}
+%\usemintedstyle{abap}
 
 \newcommand{\inputc}[1]{
 	\inputminted[
 		frame=lines,
 		framesep=2mm,
-		baselinestretch=1.1,
+		baselinestretch=1.05,
 		fontsize=\small,
 		linenos,
 		tabsize=4,
@@ -29,8 +31,6 @@
 \fancyhead[L]{\slshape \leftmark}
 \fancyhead[C]{\thepage}
 \fancyhead[R]{\slshape \rightmark}
-
-\setmainfont{URW Bookman}
 
 \author{Jasper Levin Spahl}
 
@@ -48,7 +48,7 @@
 \line(1,0){400}\\
 \vfill
 Jasper Levin Spahl\\
-TINF22\_M2869404\\
+Matrikel\,Nr. 2869404\\
 \today\\
 \end{center}
 \end{titlepage}
